@@ -1,42 +1,57 @@
 {
   "name": "flounder-react",
-  "version": "0.6.3",
+  "version": "0.0.3",
   "author": "Mouse Braun <mouse@knoblau.ch>",
-  "description": "React Wrapper around FlounderJS, a native friendly dropdown menu",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha --compilers js:babel-register",
-    "compile": "babel --presets es2015,stage-0,react -d lib/ src/",
-    "prepublish": "npm run compile",
-    "watch": "npm-scripts-watcher"
-  },
-  "main": "./lib/index.js",
-  "watch": {
-    "src/**/*.js": [
-      "compile"
-    ]
-  },
-  "peerDependencies": {
-    "react": "^0.14.7"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.7.5",
-    "babel-core": "^6.7.0",
-    "babel-eslint": "^6.0.0",
-    "babel-preset-es2015": "^6.6.0",
-    "babel-preset-react": "^6.1.18",
-    "babel-preset-stage-0": "^6.1.18",
-    "babel-register": "^6.6.0",
-    "chai": "^3.5.0",
-    "mocha": "^2.1.0"
-  },
+  "description": "a native friendly dropdown menu",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sociomantic-tsunami/flounder-react.git"
+    "url": "git+https://github.com/sociomantic-tsunami/flounder.git"
+  },
+  "scripts": {
+    "buildTests": "./node_modules/.bin/gulp buildTests",
+    "build": "./node_modules/.bin/gulp && npm test && echo \"All builds complete and tests passed.\"",
+    "gulp": "./node_modules/.bin/gulp",
+    "test": "node --harmony ./scripts/nightmare.js",
+    "versionBump": "node ./scripts/version_bump.js"
+  },
+  "devDependencies": {
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "connect": "^3.4.0",
+    "flounder": "^0.6.3",
+    "gulp": "^3.9.0",
+    "gulp-header": "^1.7.1",
+    "gulp-uglify": "^1.5.1",
+    "nightmare": "^2.1.1",
+    "promise": "^7.1.1",
+    "qunitjs": "^1.20.0",
+    "react": "^0.14.8",
+    "react-dom": "^0.14.8",
+    "serve-static": "^1.10.0",
+    "vo": "^1.0.3"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sociomantic-tsunami/flounder-react/issues"
+    "url": "https://github.com/sociomantic-tsunami/flounder/issues"
   },
-  "homepage": "https://github.com/sociomantic-tsunami/flounder-react#readme"
+  "files": [
+    "CODE_OF_CONDUCT.md",
+    "README.md",
+    "src/"
+  ],
+  "homepage": "https://github.com/sociomantic-tsunami/flounder-react",
+  "main": "./src/flounder.react.jsx",
+  "keywords": [
+    "select2",
+    "dropdown",
+    "plugin",
+    "react",
+    "component",
+    "ui",
+    "frontend",
+    "select",
+    "box",
+    "flounder",
+    "sociomantic"
+  ]
 }

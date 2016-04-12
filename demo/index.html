@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Flounder demo</title>
+        <link rel="stylesheet" href="../dist/flounder-structure.css">
+        <style type="text/css">
+        .demo--label
+        {
+            width               : 150px;
+            margin-top          : 15px;
+            display             : inline-block;
+        }
+        </style>
+    </head>
+    <body>
+        <div>
+            <span class="demo--label">Vanilla from Input (sections, multiple tags, built from selector string)</span>
+            <input class="vanilla--input--tags" id="vanilla--input--tags" type="text">
+        </div>
+        <div>
+            <span class="demo--label">Vanilla from Input (multiple, dynamic options, default index, built from element)</span>
+            <input id="vanilla--input" type="text">
+        </div>
+        <div>
+            <style type="text/css">
+                .class--to--denote--selected--option
+                {
+                    color:                      #fff;
+                    background-color:           #555;
+                }
+                .class--to--denote--selected--option:hover
+                {
+                    color:                      #08f;
+                    background-color:           #509;
+                }
+            </style>
+            <span class="demo--label">Vanilla from Select (default value, custom classes, built from element)</span>
+            <select id="vanilla--select" class="test--class--one  test--class--two">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div>
+            <span class="demo--label">React from Div (multiple, tags, placeholder, built from element)</span>
+            <div style="display:inline-block;" id="react--multiple--tags"></div>
+        </div>
+        <div>
+            <span class="demo--label">React from Span (default value, built from element)</span>
+            <span style="display:inline-block;" id="react--span"></span>
+        </div>
+        <div>
+            <span class="demo--label">React from Div (multiple, desciption, default index, elements disabled, built from element)</span>
+            <div style="display:inline-block;" id="react--multiple--desc"></div>
+        </div>
+        <div>
+            <span class="demo--label">AMD required vanilla from Div (description, placeholder, built from string)</span>
+            <div style="display:inline-block;" id="AMD--desc"></div>
+        </div>
+        <div>
+            <span class="demo--label">AMD required vanilla from select (loadFromUrl, placeholder, built from element)</span>
+            <select id="AMD--select" class="test--class--one  test--class--two">
+            </select>
+        </div>
+        <div>
+            <span class="demo--label">Microbe plugin from Div (multiple, microbe wrapper, loads JSON onFirstTouch)</span>
+            <div style="display:inline-block;" id="microbe--multiple--desc"></div>
+        </div>
+        <div>
+            <span class="demo--label">jQuery plugin from Div (search, placeholder, jquery wrapper, loadData onInit)</span>
+            <div style="display:inline-block;" id="jquery--div"></div>
+        </div>
+
+        <button class="debug--mode">debug mode</button>
+        <button class="destroy--all">destroy all</button>
+        <script type="text/javascript" src="./vendor/jquery.js"></script>
+        <script type="text/javascript" src="../dist/flounder.jquery.js"></script>
+        <script type="text/javascript" src="./vendor/microbe.js"></script>
+        <script type="text/javascript" src="../dist/flounder.microbe.js"></script>
+        <script type="text/javascript" data-main="../demo/demoDist.js" src="./vendor/require.js"></script>
+
+    </body>
+</html>
