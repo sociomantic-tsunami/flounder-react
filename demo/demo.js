@@ -1,9 +1,9 @@
 
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
-import { FlounderReact }    from '../src/flounder.react.jsx';
+import { FlounderReact }    from './vendor/flounder.react.js';
 
-window.Flounder = Flounder;
+window.FlounderReact = FlounderReact;
 
 let _slice = Array.prototype.slice;
 /**
