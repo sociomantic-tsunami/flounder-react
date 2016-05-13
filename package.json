@@ -5,7 +5,7 @@
   "description": "a native friendly dropdown menu",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sociomantic-tsunami/flounder.git"
+    "url": "git+https://github.com/sociomantic-tsunami/flounder-react.git"
   },
   "scripts": {
     "buildTests": "./node_modules/.bin/gulp buildTests",
@@ -18,10 +18,10 @@
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "connect": "^3.4.0",
-    "flounder": "^0.6.3",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-uglify": "^1.5.1",
+    "microbejs": "^0.5.2",
     "nightmare": "^2.1.1",
     "promise": "^7.1.1",
     "qunitjs": "^1.20.0",
@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sociomantic-tsunami/flounder/issues"
+    "url": "https://github.com/sociomantic-tsunami/flounder-react/issues"
   },
   "files": [
     "CODE_OF_CONDUCT.md",

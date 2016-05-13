@@ -42,21 +42,21 @@ gulp.task( 'buildTests', function()
 
 gulp.task( 'demo', function()
 {
-    browserify( './src/flounder.react.jsx' )
-        .transform( babelify, { stage : 0 } )
-        .bundle()
-        .pipe( fs.createWriteStream( __dirname + '/demo/vendor/flounder.react.js' ) )
-        .on( 'finish', function()
-        {
-            gulp.src( './demo/vendor/flounder.react.js' )
-                .pipe( header( licenceLong ) )
-                .pipe( gulp.dest( './demo/vendor/' ) );
+    // browserify( './src/flounder.react.jsx' )
+    //     .transform( babelify, { stage : 0 } )
+    //     .bundle()
+    //     .pipe( fs.createWriteStream( __dirname + '/demo/vendor/flounder.react.js' ) )
+    //     .on( 'finish', function()
+    //     {
+            // gulp.src( './demo/vendor/flounder.react.js' )
+            //     .pipe( header( licenceLong ) )
+            //     .pipe( gulp.dest( './demo/vendor/' ) );
 
             browserify( './demo/demo.js' )
                 .transform( babelify, { stage : 0 } )
                 .bundle()
                 .pipe( fs.createWriteStream( __dirname + '/demo/demoDist.js' ) );
-        } );
+        // } );
 } );
 
 

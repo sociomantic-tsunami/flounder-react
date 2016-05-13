@@ -4,12 +4,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
-import Flounder             from 'flounder/src/core/flounder';
-import classes              from 'flounder/src/core/classes';
-import utils                from 'flounder/src/core/utils';
-import Search               from 'flounder/src/core/search';
-import version              from 'flounder/src/core/version';
-import { setDefaultOption } from 'flounder/src/core/defaults';
+import Flounder             from './flounder/src/core/flounder';
+import classes              from './flounder/src/core/classes';
+import utils                from './flounder/src/core/utils';
+import Search               from './flounder/src/core/search';
+import version              from './flounder/src/core/version';
+import { setDefaultOption } from './flounder/src/core/defaults';
 
 const slice = Array.prototype.slice;
 
@@ -31,7 +31,7 @@ class FlounderReact extends Component
     /**
      * ## componentDidMount
      *
-     * setup to run afte rendering the dom
+     * setup to run after rendering the dom
      *
      * @return _Void_
      */
