@@ -10,7 +10,7 @@
   "scripts": {
     "buildTests": "./node_modules/.bin/gulp buildTests",
     "build": "./node_modules/.bin/gulp && npm test && echo \"All builds complete and tests passed.\"",
-    "gulp": "./node_modules/.bin/gulp",
+    "gulp": "cp -R ./node_modules/flounder/src/core ./src/core && ./node_modules/.bin/gulp",
     "test": "node --harmony ./scripts/nightmare.js",
     "versionBump": "node ./scripts/version_bump.js"
   },

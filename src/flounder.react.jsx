@@ -4,12 +4,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
-import Flounder             from './flounder/src/core/flounder';
-import classes              from './flounder/src/core/classes';
-import utils                from './flounder/src/core/utils';
-import Search               from './flounder/src/core/search';
-import version              from './flounder/src/core/version';
-import { setDefaultOption } from './flounder/src/core/defaults';
+import Flounder             from './core/flounder';
+import classes              from './core/classes';
+import utils                from './core/utils';
+import Search               from './core/search';
+import version              from './core/version';
+import { setDefaultOption } from './core/defaults';
 
 const slice = Array.prototype.slice;
 

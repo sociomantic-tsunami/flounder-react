@@ -31,3 +31,5 @@ node_modules/
 .tmp
 config.js
 npm-debug.log
+
+src/flounder

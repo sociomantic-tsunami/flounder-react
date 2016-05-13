@@ -130,7 +130,7 @@ _reactDom2['default'].render(_react2['default'].createElement(FlounderReact, {
 exports['default'] = _srcFlounderReactJsx2['default'];
 module.exports = exports['default'];
 
-},{"../src/flounder.react.jsx":172,"microbejs":31,"react":171,"react-dom":42}],2:[function(require,module,exports){
+},{"../src/flounder.react.jsx":181,"microbejs":31,"react":171,"react-dom":42}],2:[function(require,module,exports){
 "use strict";
 
 // rawAsap provides everything we need except exception management.
@@ -20238,315 +20238,6 @@ module.exports = validateDOMNesting;
 module.exports = require('./lib/React');
 
 },{"./lib/React":66}],172:[function(require,module,exports){
-
-/* jshint globalstrict: true */
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactDom = require('react-dom');
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
-
-var _flounderSrcCoreFlounder = require('./flounder/src/core/flounder');
-
-var _flounderSrcCoreFlounder2 = _interopRequireDefault(_flounderSrcCoreFlounder);
-
-var _flounderSrcCoreClasses = require('./flounder/src/core/classes');
-
-var _flounderSrcCoreClasses2 = _interopRequireDefault(_flounderSrcCoreClasses);
-
-var _flounderSrcCoreUtils = require('./flounder/src/core/utils');
-
-var _flounderSrcCoreUtils2 = _interopRequireDefault(_flounderSrcCoreUtils);
-
-var _flounderSrcCoreSearch = require('./flounder/src/core/search');
-
-var _flounderSrcCoreSearch2 = _interopRequireDefault(_flounderSrcCoreSearch);
-
-var _flounderSrcCoreVersion = require('./flounder/src/core/version');
-
-var _flounderSrcCoreVersion2 = _interopRequireDefault(_flounderSrcCoreVersion);
-
-var _flounderSrcCoreDefaults = require('./flounder/src/core/defaults');
-
-var slice = Array.prototype.slice;
-
-var FlounderReact = (function (_Component) {
-    _inherits(FlounderReact, _Component);
-
-    _createClass(FlounderReact, [{
-        key: 'allStates',
-
-        /**
-         * available states
-         *
-         * @return _Array_ available states
-         */
-        value: function allStates() {
-            return ['default'];
-        }
-
-        /**
-         * ## componentDidMount
-         *
-         * setup to run after rendering the dom
-         *
-         * @return _Void_
-         */
-    }, {
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var refs = this.refs;
-
-            this.target = this.originalTarget = refs.wrapper.parentNode;
-
-            refs.data = slice.call(refs.optionsList.children, 0);
-            refs.selectOptions = slice.call(refs.select.children, 0);
-
-            refs.flounder.flounder = this.originalTarget.flounder = this.target.flounder = this;
-
-            var multiTagWrapper = refs.multiTagWrapper;
-
-            if (!this.multiple) {
-                refs.select.removeAttribute('multiple');
-            }
-
-            var _utils$setPlatform = _flounderSrcCoreUtils2['default'].setPlatform();
-
-            var isOsx = _utils$setPlatform.isOsx;
-            var isIos = _utils$setPlatform.isIos;
-            var multiSelect = _utils$setPlatform.multiSelect;
-
-            this.isOsx = isOsx;
-            this.isIos = isIos;
-            this.multiSelect = multiSelect;
-
-            this.onRender();
-
-            try {
-                this.onComponentDidMount();
-            } catch (e) {
-                console.log('something may be wrong in "onComponentDidMount"', e);
-            }
-        }
-
-        /**
-         * sets the initial state
-         *
-         * @return _Void_
-         */
-    }]);
-
-    function FlounderReact(props) {
-        _classCallCheck(this, FlounderReact);
-
-        _get(Object.getPrototypeOf(FlounderReact.prototype), 'constructor', this).call(this, props);
-        this.state = {
-            modifier: '',
-            errorMessage: ''
-        };
-    }
-
-    /**
-     * Callback to handle change.
-     *
-     * Also updates div state and classes
-     *
-     * @param  _Object_ e Event object
-     */
-
-    _createClass(FlounderReact, [{
-        key: 'handleChange',
-        value: function handleChange(e) {
-            if (this.props.onChange) {
-                this.props.onChange(e);
-            }
-        }
-
-        /**
-         * ## prepOptions
-         *
-         * double checks that the options are correctly formatted
-         *
-         * @param {Array} _options array object that may contain objects or strings
-         *
-         * @return _Array_ correctly formatted options
-         */
-    }, {
-        key: 'prepOptions',
-        value: function prepOptions(data) {
-            var _this = this;
-
-            data.forEach(function (dataObj, i) {
-                if (typeof dataObj === 'string') {
-                    dataObj = {
-                        text: dataObj,
-                        value: dataObj
-                    };
-                }
-
-                dataObj.text = _this.allowHTML ? dataObj.text : _flounderSrcCoreUtils2['default'].escapeHTML(dataObj.text);
-            });
-
-            return data;
-        }
-
-        /**
-         * Spits out our markup
-         *
-         * REACT FLOUNDER CAN NOT MOUNT TO INPUT OR SELECT TAGS.
-         *
-         */
-    }, {
-        key: 'render',
-        value: function render(e) {
-            var _this2 = this;
-
-            this.bindThis();
-
-            this.initializeOptions();
-
-            if (this.search) {
-                this.search = new _flounderSrcCoreSearch2['default'](this);
-            }
-
-            try {
-                this.onInit();
-            } catch (e) {
-                console.log('something may be wrong in "onInit"', e);
-            }
-
-            var optionsCollection = [];
-            var selectOptionsCollection = [];
-
-            var escapeHTML = _flounderSrcCoreUtils2['default'].escapeHTML;
-            var props = this.props;
-            var data = this.data = this.prepOptions(props.data || this.data);
-
-            var handleChange = this.handleChange.bind(this);
-            var multiple = this.multiple;
-            var searchBool = this.search;
-
-            var defaultValue = this._default = (0, _flounderSrcCoreDefaults.setDefaultOption)(this, props, data);
-            var defaultReact = multiple ? [defaultValue.value] : defaultValue.value;
-
-            var wrapperClass = this.wrapperClass ? '  ' + this.wrapperClass : '';
-            var flounderClass = this.flounderClass ? '  ' + this.flounderClass : '';
-
-            var _stateModifier = this.state.modifier;
-            _stateModifier = _stateModifier.length > 0 ? '--' + _stateModifier : '';
-
-            return _react2['default'].createElement(
-                'div',
-                { ref: 'wrapper', className: _flounderSrcCoreClasses2['default'].MAIN_WRAPPER + wrapperClass },
-                _react2['default'].createElement(
-                    'div',
-                    { ref: 'flounder', tabIndex: '0', className: _flounderSrcCoreClasses2['default'].MAIN + flounderClass },
-                    _react2['default'].createElement(
-                        'div',
-                        { ref: 'selected', className: _flounderSrcCoreClasses2['default'].SELECTED_DISPLAYED, 'data-value': defaultValue.value },
-                        defaultValue.text
-                    ),
-                    multiple ? _react2['default'].createElement('div', { ref: 'multiTagWrapper', className: _flounderSrcCoreClasses2['default'].MULTI_TAG_LIST, multiple: true }) : null,
-                    _react2['default'].createElement('div', { ref: 'arrow', className: _flounderSrcCoreClasses2['default'].ARROW }),
-                    _react2['default'].createElement(
-                        'div',
-                        { ref: 'optionsListWrapper', className: _flounderSrcCoreClasses2['default'].OPTIONS_WRAPPER + '  ' + _flounderSrcCoreClasses2['default'].HIDDEN },
-                        _react2['default'].createElement(
-                            'div',
-                            { ref: 'optionsList', className: _flounderSrcCoreClasses2['default'].LIST },
-                            data.map(function (dataObj, i) {
-                                var extraClass = i === defaultValue.index ? '  ' + _flounderSrcCoreClasses2['default'].SELECTED : '';
-                                extraClass += dataObj.disabled ? '  ' + _flounderSrcCoreClasses2['default'].DISABLED : '';
-                                extraClass += dataObj.extraClass ? '  ' + dataObj.extraClass : '';
-
-                                if (typeof dataObj === 'string') {
-                                    dataObj = [dataObj, dataObj];
-                                }
-
-                                return _react2['default'].createElement(
-                                    'div',
-                                    { className: _flounderSrcCoreClasses2['default'].OPTION + extraClass, 'data-index': i, key: i, ref: 'option' + i },
-                                    dataObj.text,
-                                    dataObj.description ? _react2['default'].createElement(
-                                        'div',
-                                        { className: _flounderSrcCoreClasses2['default'].DESCRIPTION },
-                                        dataObj.description
-                                    ) : null
-                                );
-                            })
-                        )
-                    ),
-                    searchBool ? _react2['default'].createElement('input', { ref: 'search', type: 'text', className: _flounderSrcCoreClasses2['default'].SEARCH }) : null
-                ),
-                _react2['default'].createElement(
-                    'select',
-                    { ref: 'select', className: _flounderSrcCoreClasses2['default'].SELECT_TAG + '  ' + _flounderSrcCoreClasses2['default'].HIDDEN, defaultValue: defaultReact, tabIndex: '-1', multiple: multiple },
-                    data.map(function (dataObj, i) {
-                        var extraClass = i === defaultValue ? '  ' + _this2.selectedClass : '';
-
-                        var res = {
-                            className: _flounderSrcCoreClasses2['default'].OPTION + extraClass,
-                            'data-index': i
-                        };
-
-                        return _react2['default'].createElement(
-                            'option',
-                            { key: i, value: dataObj.value, className: _flounderSrcCoreClasses2['default'].OPTION_TAG, ref: 'option' + i, disabled: dataObj.disabled },
-                            dataObj.text
-                        );
-                    })
-                )
-            );
-        }
-    }]);
-
-    return FlounderReact;
-})(_react.Component);
-
-var FlounderPrototype = _flounderSrcCoreFlounder2['default'].prototype;
-var FlounderReactPrototype = FlounderReact.prototype;
-var methods = Object.getOwnPropertyNames(FlounderPrototype);
-
-methods.forEach(function (method) {
-    if (!FlounderReactPrototype[method] && !FlounderPrototype[method].propertyIsEnumerable()) {
-        FlounderReactPrototype[method] = FlounderPrototype[method];
-    }
-});
-
-Object.defineProperty(FlounderReact, 'version', {
-    get: function get() {
-        return _flounderSrcCoreVersion2['default'];
-    }
-});
-
-Object.defineProperty(FlounderReact.prototype, 'version', {
-    get: function get() {
-        return _flounderSrcCoreVersion2['default'];
-    }
-});
-
-exports['default'] = { React: _react2['default'], Component: _react.Component, ReactDOM: _reactDom2['default'], FlounderReact: FlounderReact, Flounder: _flounderSrcCoreFlounder2['default'] };
-module.exports = exports['default'];
-
-},{"./flounder/src/core/classes":175,"./flounder/src/core/defaults":176,"./flounder/src/core/flounder":178,"./flounder/src/core/search":179,"./flounder/src/core/utils":180,"./flounder/src/core/version":181,"react":171,"react-dom":42}],173:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -20651,18 +20342,18 @@ var api = {
         var originalTarget = this.originalTarget;
         var tagName = originalTarget.tagName;
 
-        if (tagName === 'INPUT' || tagName === 'SELECT') {
-            var target = originalTarget.nextElementSibling;
+        refs.flounder.flounder = originalTarget.flounder = this.target.flounder = null;
 
+        if (tagName === 'INPUT' || tagName === 'SELECT') {
             if (tagName === 'SELECT') {
                 var firstOption = originalTarget[0];
 
                 if (firstOption && firstOption.textContent === this.props.placeholder) {
                     originalTarget.removeChild(firstOption);
                 }
-            } else if (tagName === 'INPUT') {
-                target = refs.flounder.parentNode;
             }
+
+            var target = originalTarget.nextElementSibling;
 
             try {
                 target.parentNode.removeChild(target);
@@ -20680,8 +20371,6 @@ var api = {
                 throw ' : this flounder may have already been removed';
             }
         }
-
-        refs.flounder.flounder = originalTarget.flounder = this.target.flounder = null;
     },
 
     /**
@@ -21011,12 +20700,12 @@ var api = {
      * @return _Object_ rebuilt flounder object
      */
     rebuild: function rebuild(data, props) {
-        if (props || !props && (typeof data === 'string' || data && typeof data.length !== 'number')) {
-            return this.reconfigure(data, props);
+        if (props || !props && (typeof data === 'string' || typeof data.length !== 'number')) {
+            this.reconfigureFlounder(data, props);
         }
 
-        data = this.data = data || this.data;
         props = this.props;
+        data = this.data = data || this.data;
         var refs = this.refs;
         var _select = refs.select;
 
@@ -21174,10 +20863,10 @@ var api = {
             var values = this.refs.selectOptions.map(function (el) {
                 return el.value === value + '' ? el.index : null;
             }).filter(function (a) {
-                return a === 0 || !!a;
+                return !!a;
             });
 
-            return values.length !== 0 ? this.setByIndex(values, multiple, programmatic) : null;
+            return value ? this.setByIndex(values, multiple, programmatic) : null;
         }
     }
 };
@@ -21185,7 +20874,7 @@ var api = {
 exports['default'] = api;
 module.exports = exports['default'];
 
-},{"./classes":175,"./defaults":176,"./utils":180}],174:[function(require,module,exports){
+},{"./classes":174,"./defaults":175,"./utils":179}],173:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -21262,32 +20951,74 @@ var build = {
     bindThis: function bindThis() {
         var _this = this;
 
-        ['catchBodyClick', 'checkClickTarget', 'checkFlounderKeypress', 'clearPlaceholder', 'clickSet', 'divertTarget', 'displayMultipleTags', 'firstTouchController', 'fuzzySearch', 'removeMultiTag', 'setKeypress', 'setSelectValue', 'toggleList', 'toggleListSearchClick'].forEach(function (func) {
+        ['catchBodyClick', 'checkClickTarget', 'checkFlounderKeypress', 'clearPlaceholder', 'clickSet', 'divertTarget', 'displayMultipleTags', 'firstTouchController', 'fuzzySearch', 'removeMultiTag', 'setKeypress', 'setSelectValue', 'toggleList'].forEach(function (func) {
             _this[func] = _this[func].bind(_this);
             _this[func].___isBound = true;
         });
     },
 
     /**
-     * ## buildArrow
+     * ## buildDom
      *
-     * builds the arrow and the
+     * builds flounder
      *
-     * @param {Object} props property object
-     * @param {Function} constructElement ref to this.constructElement
-     *
-     * @return {DOMElement} arrow
+     * @return _Void_
      */
-    buildArrow: function buildArrow(props, constructElement) {
-        if (props.disableArrow) {
-            return null;
-        } else {
-            var arrow = constructElement({ className: _classes2['default'].ARROW });
-            var arrowInner = constructElement({ className: _classes2['default'].ARROW_INNER });
-            arrow.appendChild(arrowInner);
+    buildDom: function buildDom() {
+        this.refs = {};
 
-            return arrow;
+        var constructElement = _utils2['default'].constructElement;
+
+        var wrapperClass = _classes2['default'].MAIN_WRAPPER;
+        var wrapper = _utils2['default'].constructElement({ className: this.wrapperClass ? wrapperClass + ' ' + this.wrapperClass : wrapperClass });
+        var flounderClass = _classes2['default'].MAIN;
+        var flounder = constructElement({ className: this.flounderClass ? flounderClass + '  ' + this.flounderClass : flounderClass });
+
+        flounder.setAttribute('aria-hidden', true);
+        flounder.tabIndex = 0;
+        wrapper.appendChild(flounder);
+
+        var select = this.initSelectBox(wrapper);
+        select.tabIndex = -1;
+
+        if (this.multiple === true) {
+            select.setAttribute('multiple', '');
         }
+
+        var data = this.data;
+        var defaultValue = this._default = (0, _defaults.setDefaultOption)(this, this.props, data);
+        var selected = constructElement({ className: _classes2['default'].SELECTED_DISPLAYED,
+            'data-value': defaultValue.value, 'data-index': defaultValue.index || -1 });
+        selected.innerHTML = defaultValue.text;
+
+        var multiTagWrapper = this.multiple ? constructElement({ className: _classes2['default'].MULTI_TAG_LIST }) : null;
+
+        var arrow = constructElement({ className: _classes2['default'].ARROW });
+        var optionsListWrapper = constructElement({ className: _classes2['default'].OPTIONS_WRAPPER + '  ' + _classes2['default'].HIDDEN });
+        var optionsList = constructElement({ className: _classes2['default'].LIST });
+        optionsList.setAttribute('role', 'listbox');
+        optionsListWrapper.appendChild(optionsList);
+
+        [selected, multiTagWrapper, arrow, optionsListWrapper].forEach(function (el) {
+            if (el) {
+                flounder.appendChild(el);
+            }
+        });
+
+        var search = this.addSearch(flounder);
+        var selectOptions = undefined;
+
+        var _buildData = this.buildData(defaultValue, data, optionsList, select);
+
+        var _buildData2 = _slicedToArray(_buildData, 2);
+
+        data = _buildData2[0];
+        selectOptions = _buildData2[1];
+
+        this.target.appendChild(wrapper);
+
+        this.refs = { wrapper: wrapper, flounder: flounder, selected: selected, arrow: arrow, optionsListWrapper: optionsListWrapper,
+            search: search, multiTagWrapper: multiTagWrapper, optionsList: optionsList, select: select, data: data, selectOptions: selectOptions };
     },
 
     /**
@@ -21313,8 +21044,7 @@ var build = {
         var selectedClass = this.selectedClass;
         var escapeHTML = _utils2['default'].escapeHTML;
         var addClass = _utils2['default'].addClass;
-        var refs = this.refs;
-        var selectRef = refs.select;
+        var selectRef = this.refs.select;
         var allowHTML = this.allowHTML;
 
         /**
@@ -21392,11 +21122,7 @@ var build = {
                 var selectChild = selectRef.children[i];
                 selectOption = selectChild;
                 selectChild.setAttribute('value', selectChild.value);
-
-                if (selectChild.disabled === true && data[i]) {
-                    addClass(data[i], _classes2['default'].DISABLED);
-                }
-                addClass(selectChild, _classes2['default'].OPTION_TAG);
+                addClass(selectChild, 'flounder--option--tag');
             }
 
             if (i === defaultValue.index) {
@@ -21430,15 +21156,7 @@ var build = {
                     section.appendChild(header);
                     optionsList.appendChild(section);
 
-                    var dataObjData = dataObj.data;
-                    dataObjData.forEach(function (d, i) {
-                        if (typeof d !== 'object') {
-                            d = dataObjData[i] = {
-                                text: d,
-                                value: d
-                            };
-                        }
-
+                    dataObj.data.forEach(function (d) {
                         data[index] = buildDiv(d, index);
                         section.appendChild(data[index]);
                         selectOptions[index] = buildOption(d, index);
@@ -21454,73 +21172,6 @@ var build = {
         });
 
         return [data, selectOptions];
-    },
-
-    /**
-     * ## buildDom
-     *
-     * builds flounder
-     *
-     * @return _Void_
-     */
-    buildDom: function buildDom() {
-        var props = this.props;
-        this.refs = {};
-
-        var constructElement = _utils2['default'].constructElement;
-
-        var wrapperClass = _classes2['default'].MAIN_WRAPPER;
-        var wrapper = _utils2['default'].constructElement({ className: this.wrapperClass ? wrapperClass + ' ' + this.wrapperClass : wrapperClass });
-        var flounderClass = _classes2['default'].MAIN;
-        var flounder = constructElement({ className: this.flounderClass ? flounderClass + '  ' + this.flounderClass : flounderClass });
-
-        flounder.setAttribute('aria-hidden', true);
-        flounder.tabIndex = 0;
-        wrapper.appendChild(flounder);
-
-        var select = this.initSelectBox(wrapper);
-        select.tabIndex = -1;
-
-        if (this.multiple === true) {
-            select.setAttribute('multiple', '');
-        }
-
-        var data = this.data;
-        var defaultValue = this._default = (0, _defaults.setDefaultOption)(this, this.props, data);
-        var selected = constructElement({ className: _classes2['default'].SELECTED_DISPLAYED,
-            'data-value': defaultValue.value, 'data-index': defaultValue.index || -1 });
-        selected.innerHTML = defaultValue.text;
-
-        var multiTagWrapper = this.multiple ? constructElement({ className: _classes2['default'].MULTI_TAG_LIST }) : null;
-
-        var search = this.addSearch(flounder);
-
-        var optionsListWrapper = constructElement({ className: _classes2['default'].OPTIONS_WRAPPER + '  ' + _classes2['default'].HIDDEN });
-        var optionsList = constructElement({ className: _classes2['default'].LIST });
-        optionsList.setAttribute('role', 'listbox');
-        optionsListWrapper.appendChild(optionsList);
-
-        var arrow = this.buildArrow(props, constructElement);
-
-        [selected, multiTagWrapper, optionsListWrapper, arrow].forEach(function (el) {
-            if (el) {
-                flounder.appendChild(el);
-            }
-        });
-
-        var selectOptions = undefined;
-
-        var _buildData = this.buildData(defaultValue, data, optionsList, select);
-
-        var _buildData2 = _slicedToArray(_buildData, 2);
-
-        data = _buildData2[0];
-        selectOptions = _buildData2[1];
-
-        this.target.appendChild(wrapper);
-
-        this.refs = { wrapper: wrapper, flounder: flounder, selected: selected, arrow: arrow, optionsListWrapper: optionsListWrapper,
-            search: search, multiTagWrapper: multiTagWrapper, optionsList: optionsList, select: select, data: data, selectOptions: selectOptions };
     },
 
     /**
@@ -21639,7 +21290,6 @@ var build = {
             props.data = data;
         } else if (!props && typeof data === 'object') {
             props = data;
-            console.log(props);
             props.data = props.data || this.data;
         } else {
             props.data = data || props.data || this.data;
@@ -21677,22 +21327,20 @@ var build = {
 exports['default'] = build;
 module.exports = exports['default'];
 
-},{"./classes":175,"./defaults":176,"./utils":180}],175:[function(require,module,exports){
+},{"./classes":174,"./defaults":175,"./utils":179}],174:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
 var classes = {
-    ARROW: 'flounder__arrow--wrapper',
-    ARROW_INNER: 'flounder__arrow--inner',
+    ARROW: 'flounder__arrow',
     DESCRIPTION: 'flounder__option--description',
     DISABLED: 'flounder__disabled',
     DISABLED_OPTION: 'flounder__disabled--option',
     HEADER: 'flounder__header',
     HIDDEN: 'flounder--hidden',
     HIDDEN_IOS: 'flounder--hidden--ios',
-    HOVER: 'flounder__hover',
     LIST: 'flounder__list',
     LOADING: 'flounder__loading',
     LOADING_FAILED: 'flounder__loading--failed',
@@ -21717,7 +21365,7 @@ var classes = {
 exports['default'] = classes;
 module.exports = exports['default'];
 
-},{}],176:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -21742,7 +21390,6 @@ var defaultOptions = {
     defaultEmpty: false,
     defaultIndex: false,
     defaultValue: false,
-    disableArrow: false,
     keepChangesOnDestroy: false,
     multiple: false,
     multipleTags: false,
@@ -21754,7 +21401,6 @@ var defaultOptions = {
     onInit: function onInit() {},
     onOpen: function onOpen(e, selectedValues) {},
     onSelect: function onSelect(e, selectedValues) {},
-    openOnHover: false,
     placeholder: 'Please choose an option',
     search: false,
     selectDataOverride: false
@@ -21934,13 +21580,11 @@ var defaults = {
                 }
             }
 
-            // default prio
-            def = configObj.defaultIndex ? setIndexDefault(_data) : null;
-            def = !def && configObj.defaultValue ? setValueDefault(_data) : def;
-            def = !def && configObj.multiple ? setPlaceholderDefault(self, _data) : def;
-            def = !def ? setIndexDefault(_data, 0) : def;
+            def = [setIndexDefault(_data), setValueDefault(_data), configObj.multiple ? setPlaceholderDefault(self, _data) : setIndexDefault(_data, 0)];
 
-            return def;
+            return def.filter(function (_v) {
+                return _v;
+            })[0];
         };
 
         return checkDefaultPriority();
@@ -21950,7 +21594,7 @@ var defaults = {
 exports['default'] = defaults;
 module.exports = exports['default'];
 
-},{"./classes":175}],177:[function(require,module,exports){
+},{"./classes":174}],176:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -21984,10 +21628,6 @@ var events = {
         var refs = this.refs;
         refs.selected.addEventListener('click', this.firstTouchController);
         refs.select.addEventListener('focus', this.firstTouchController);
-
-        if (this.props.openOnHover) {
-            refs.wrapper.addEventListener('mouseenter', this.firstTouchController);
-        }
     },
 
     /**
@@ -22004,14 +21644,7 @@ var events = {
         refs.select.addEventListener(changeEvent, this.divertTarget);
 
         refs.flounder.addEventListener('keydown', this.checkFlounderKeypress);
-
-        if (props.openOnHover) {
-            var wrapper = refs.wrapper;
-            wrapper.addEventListener('mouseenter', this.toggleList);
-            wrapper.addEventListener('mouseleave', this.toggleList);
-        } else {
-            refs.selected.addEventListener('click', this.toggleList);
-        }
+        refs.selected.addEventListener('click', this.toggleList);
 
         this.addFirstTouchListeners();
         this.addOptionsListeners();
@@ -22033,20 +21666,9 @@ var events = {
 
         this.refs.data.forEach(function (dataObj, i) {
             if (dataObj.tagName === 'DIV') {
-                dataObj.addEventListener('mouseenter', _this.addHoverClass);
-                dataObj.addEventListener('mouseleave', _this.removeHoverClass);
-
                 dataObj.addEventListener('click', _this.clickSet);
             }
         });
-    },
-
-    addHoverClass: function addHoverClass() {
-        _utils2['default'].addClass(this, _classes2['default'].HOVER);
-    },
-
-    removeHoverClass: function removeHoverClass() {
-        _utils2['default'].removeClass(this, _classes2['default'].HOVER);
     },
 
     /**
@@ -22100,7 +21722,7 @@ var events = {
      */
     addSearchListeners: function addSearchListeners() {
         var search = this.refs.search;
-        search.addEventListener('click', this.toggleListSearchClick);
+        search.addEventListener('click', this.toggleList);
         search.addEventListener('keyup', this.fuzzySearch);
         search.addEventListener('focus', this.clearPlaceholder);
     },
@@ -22145,6 +21767,7 @@ var events = {
     catchBodyClick: function catchBodyClick(e) {
         if (!this.checkClickTarget(e)) {
             this.toggleList(e);
+
             this.addPlaceholder();
         }
     },
@@ -22160,7 +21783,8 @@ var events = {
      * @return _Boolean_
      */
     checkClickTarget: function checkClickTarget(e, target) {
-        target = target || e.target;
+        target = target || this.refs.data[e.target.getAttribute('data-index')] || e.target;
+
         if (target === document) {
             return false;
         } else if (target === this.refs.flounder) {
@@ -22290,10 +21914,6 @@ var events = {
 
         refs.selected.removeEventListener('click', this.firstTouchController);
         refs.select.removeEventListener('focus', this.firstTouchController);
-
-        if (this.props.openOnHover) {
-            refs.wrapper.removeEventListener('mouseenter', this.firstTouchController);
-        }
     },
 
     /**
@@ -22582,19 +22202,6 @@ var events = {
     },
 
     /**
-     * ## toggleListSearchClick
-     *
-     * toggleList wrapper for search.  only triggered if flounder is closed
-     *
-     * @return _Void_
-     */
-    toggleListSearchClick: function toggleListSearchClick(e) {
-        if (!_utils2['default'].hasClass(this.refs.wrapper, 'open')) {
-            this.toggleList(e, 'open');
-        }
-    },
-
-    /**
      * ## toggleList
      *
      * on click of flounder--selected, this shows or hides the options list
@@ -22608,17 +22215,16 @@ var events = {
         var optionsList = refs.optionsListWrapper;
         var wrapper = refs.wrapper;
         var hasClass = _utils2['default'].hasClass;
-        var type = e.type;
 
-        if (type === 'mouseleave' || force === 'close' || !hasClass(optionsList, _classes2['default'].HIDDEN)) {
-            this.toggleList.justOpened = false;
-            this.toggleClosed(e, optionsList, refs, wrapper);
-        } else if (type === 'mouseenter' || force === 'open' || force !== 'close' && _utils2['default'].hasClass(optionsList, _classes2['default'].HIDDEN)) {
-            if (type === 'keydown') {
+        if (force === 'open' || force !== 'close' && _utils2['default'].hasClass(optionsList, _classes2['default'].HIDDEN)) {
+            if (e.type === 'keydown') {
                 this.toggleList.justOpened = true;
             }
 
             this.toggleOpen(e, optionsList, refs, wrapper);
+        } else if (force === 'close' || !hasClass(optionsList, _classes2['default'].HIDDEN)) {
+            this.toggleList.justOpened = false;
+            this.toggleClosed(e, optionsList, refs, wrapper);
         }
     },
 
@@ -22673,7 +22279,7 @@ var events = {
 exports['default'] = events;
 module.exports = exports['default'];
 
-},{"./classes":175,"./search":179,"./utils":180}],178:[function(require,module,exports){
+},{"./classes":174,"./search":178,"./utils":179}],177:[function(require,module,exports){
 
 /* jshint globalstrict: true */
 'use strict';
@@ -22980,10 +22586,6 @@ var Flounder = (function () {
                     } else {
                         this.fuzzySearchReset();
                     }
-                } else if (keyCode === 27) {
-                    this.fuzzySearchReset();
-                    this.toggleList(e, 'close');
-                    this.addPlaceholder();
                 } else {
                     this.setSelectValue(e);
                     this.setKeypress(e);
@@ -23260,7 +22862,7 @@ _utils2['default'].extendClass(Flounder, _api2['default'], _build2['default'], _
 exports['default'] = Flounder;
 module.exports = exports['default'];
 
-},{"./api":173,"./build":174,"./classes":175,"./defaults":176,"./events":177,"./search":179,"./utils":180,"./version":181}],179:[function(require,module,exports){
+},{"./api":172,"./build":173,"./classes":174,"./defaults":175,"./events":176,"./search":178,"./utils":179,"./version":180}],178:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23553,7 +23155,7 @@ var Sole = (function () {
 exports.Sole = Sole;
 exports['default'] = Sole;
 
-},{}],180:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -23868,9 +23470,318 @@ var utils = {
 exports['default'] = utils;
 module.exports = exports['default'];
 
-},{"./classes":175,"microbejs/src/modules/http":32}],181:[function(require,module,exports){
+},{"./classes":174,"microbejs/src/modules/http":32}],180:[function(require,module,exports){
 'use strict';
 
-module.exports = '0.7.7';
+module.exports = '0.6.3';
 
-},{}]},{},[1]);
+},{}],181:[function(require,module,exports){
+
+/* jshint globalstrict: true */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _coreFlounder = require('./core/flounder');
+
+var _coreFlounder2 = _interopRequireDefault(_coreFlounder);
+
+var _coreClasses = require('./core/classes');
+
+var _coreClasses2 = _interopRequireDefault(_coreClasses);
+
+var _coreUtils = require('./core/utils');
+
+var _coreUtils2 = _interopRequireDefault(_coreUtils);
+
+var _coreSearch = require('./core/search');
+
+var _coreSearch2 = _interopRequireDefault(_coreSearch);
+
+var _coreVersion = require('./core/version');
+
+var _coreVersion2 = _interopRequireDefault(_coreVersion);
+
+var _coreDefaults = require('./core/defaults');
+
+var slice = Array.prototype.slice;
+
+var FlounderReact = (function (_Component) {
+    _inherits(FlounderReact, _Component);
+
+    _createClass(FlounderReact, [{
+        key: 'allStates',
+
+        /**
+         * available states
+         *
+         * @return _Array_ available states
+         */
+        value: function allStates() {
+            return ['default'];
+        }
+
+        /**
+         * ## componentDidMount
+         *
+         * setup to run after rendering the dom
+         *
+         * @return _Void_
+         */
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var refs = this.refs;
+
+            this.target = this.originalTarget = refs.wrapper.parentNode;
+
+            refs.data = slice.call(refs.optionsList.children, 0);
+            refs.selectOptions = slice.call(refs.select.children, 0);
+
+            refs.flounder.flounder = this.originalTarget.flounder = this.target.flounder = this;
+
+            var multiTagWrapper = refs.multiTagWrapper;
+
+            if (!this.multiple) {
+                refs.select.removeAttribute('multiple');
+            }
+
+            var _utils$setPlatform = _coreUtils2['default'].setPlatform();
+
+            var isOsx = _utils$setPlatform.isOsx;
+            var isIos = _utils$setPlatform.isIos;
+            var multiSelect = _utils$setPlatform.multiSelect;
+
+            this.isOsx = isOsx;
+            this.isIos = isIos;
+            this.multiSelect = multiSelect;
+
+            this.onRender();
+
+            try {
+                this.onComponentDidMount();
+            } catch (e) {
+                console.log('something may be wrong in "onComponentDidMount"', e);
+            }
+        }
+
+        /**
+         * sets the initial state
+         *
+         * @return _Void_
+         */
+    }]);
+
+    function FlounderReact(props) {
+        _classCallCheck(this, FlounderReact);
+
+        _get(Object.getPrototypeOf(FlounderReact.prototype), 'constructor', this).call(this, props);
+        this.state = {
+            modifier: '',
+            errorMessage: ''
+        };
+    }
+
+    /**
+     * Callback to handle change.
+     *
+     * Also updates div state and classes
+     *
+     * @param  _Object_ e Event object
+     */
+
+    _createClass(FlounderReact, [{
+        key: 'handleChange',
+        value: function handleChange(e) {
+            if (this.props.onChange) {
+                this.props.onChange(e);
+            }
+        }
+
+        /**
+         * ## prepOptions
+         *
+         * double checks that the options are correctly formatted
+         *
+         * @param {Array} _options array object that may contain objects or strings
+         *
+         * @return _Array_ correctly formatted options
+         */
+    }, {
+        key: 'prepOptions',
+        value: function prepOptions(data) {
+            var _this = this;
+
+            data.forEach(function (dataObj, i) {
+                if (typeof dataObj === 'string') {
+                    dataObj = {
+                        text: dataObj,
+                        value: dataObj
+                    };
+                }
+
+                dataObj.text = _this.allowHTML ? dataObj.text : _coreUtils2['default'].escapeHTML(dataObj.text);
+            });
+
+            return data;
+        }
+
+        /**
+         * Spits out our markup
+         *
+         * REACT FLOUNDER CAN NOT MOUNT TO INPUT OR SELECT TAGS.
+         *
+         */
+    }, {
+        key: 'render',
+        value: function render(e) {
+            var _this2 = this;
+
+            this.bindThis();
+
+            this.initializeOptions();
+
+            if (this.search) {
+                this.search = new _coreSearch2['default'](this);
+            }
+
+            try {
+                this.onInit();
+            } catch (e) {
+                console.log('something may be wrong in "onInit"', e);
+            }
+
+            var optionsCollection = [];
+            var selectOptionsCollection = [];
+
+            var escapeHTML = _coreUtils2['default'].escapeHTML;
+            var props = this.props;
+            var data = this.data = this.prepOptions(props.data || this.data);
+
+            var handleChange = this.handleChange.bind(this);
+            var multiple = this.multiple;
+            var searchBool = this.search;
+
+            var defaultValue = this._default = (0, _coreDefaults.setDefaultOption)(this, props, data);
+            var defaultReact = multiple ? [defaultValue.value] : defaultValue.value;
+
+            var wrapperClass = this.wrapperClass ? '  ' + this.wrapperClass : '';
+            var flounderClass = this.flounderClass ? '  ' + this.flounderClass : '';
+
+            var _stateModifier = this.state.modifier;
+            _stateModifier = _stateModifier.length > 0 ? '--' + _stateModifier : '';
+
+            return _react2['default'].createElement(
+                'div',
+                { ref: 'wrapper', className: _coreClasses2['default'].MAIN_WRAPPER + wrapperClass },
+                _react2['default'].createElement(
+                    'div',
+                    { ref: 'flounder', tabIndex: '0', className: _coreClasses2['default'].MAIN + flounderClass },
+                    _react2['default'].createElement(
+                        'div',
+                        { ref: 'selected', className: _coreClasses2['default'].SELECTED_DISPLAYED, 'data-value': defaultValue.value },
+                        defaultValue.text
+                    ),
+                    multiple ? _react2['default'].createElement('div', { ref: 'multiTagWrapper', className: _coreClasses2['default'].MULTI_TAG_LIST, multiple: true }) : null,
+                    _react2['default'].createElement('div', { ref: 'arrow', className: _coreClasses2['default'].ARROW }),
+                    _react2['default'].createElement(
+                        'div',
+                        { ref: 'optionsListWrapper', className: _coreClasses2['default'].OPTIONS_WRAPPER + '  ' + _coreClasses2['default'].HIDDEN },
+                        _react2['default'].createElement(
+                            'div',
+                            { ref: 'optionsList', className: _coreClasses2['default'].LIST },
+                            data.map(function (dataObj, i) {
+                                var extraClass = i === defaultValue.index ? '  ' + _coreClasses2['default'].SELECTED : '';
+                                extraClass += dataObj.disabled ? '  ' + _coreClasses2['default'].DISABLED : '';
+                                extraClass += dataObj.extraClass ? '  ' + dataObj.extraClass : '';
+
+                                if (typeof dataObj === 'string') {
+                                    dataObj = [dataObj, dataObj];
+                                }
+
+                                return _react2['default'].createElement(
+                                    'div',
+                                    { className: _coreClasses2['default'].OPTION + extraClass, 'data-index': i, key: i, ref: 'option' + i },
+                                    dataObj.text,
+                                    dataObj.description ? _react2['default'].createElement(
+                                        'div',
+                                        { className: _coreClasses2['default'].DESCRIPTION },
+                                        dataObj.description
+                                    ) : null
+                                );
+                            })
+                        )
+                    ),
+                    searchBool ? _react2['default'].createElement('input', { ref: 'search', type: 'text', className: _coreClasses2['default'].SEARCH }) : null
+                ),
+                _react2['default'].createElement(
+                    'select',
+                    { ref: 'select', className: _coreClasses2['default'].SELECT_TAG + '  ' + _coreClasses2['default'].HIDDEN, defaultValue: defaultReact, tabIndex: '-1', multiple: multiple },
+                    data.map(function (dataObj, i) {
+                        var extraClass = i === defaultValue ? '  ' + _this2.selectedClass : '';
+
+                        var res = {
+                            className: _coreClasses2['default'].OPTION + extraClass,
+                            'data-index': i
+                        };
+
+                        return _react2['default'].createElement(
+                            'option',
+                            { key: i, value: dataObj.value, className: _coreClasses2['default'].OPTION_TAG, ref: 'option' + i, disabled: dataObj.disabled },
+                            dataObj.text
+                        );
+                    })
+                )
+            );
+        }
+    }]);
+
+    return FlounderReact;
+})(_react.Component);
+
+var FlounderPrototype = _coreFlounder2['default'].prototype;
+var FlounderReactPrototype = FlounderReact.prototype;
+var methods = Object.getOwnPropertyNames(FlounderPrototype);
+
+methods.forEach(function (method) {
+    if (!FlounderReactPrototype[method] && !FlounderPrototype[method].propertyIsEnumerable()) {
+        FlounderReactPrototype[method] = FlounderPrototype[method];
+    }
+});
+
+Object.defineProperty(FlounderReact, 'version', {
+    get: function get() {
+        return _coreVersion2['default'];
+    }
+});
+
+Object.defineProperty(FlounderReact.prototype, 'version', {
+    get: function get() {
+        return _coreVersion2['default'];
+    }
+});
+
+exports['default'] = { React: _react2['default'], Component: _react.Component, ReactDOM: _reactDom2['default'], FlounderReact: FlounderReact, Flounder: _coreFlounder2['default'] };
+module.exports = exports['default'];
+
+},{"./core/classes":174,"./core/defaults":175,"./core/flounder":177,"./core/search":178,"./core/utils":179,"./core/version":180,"react":171,"react-dom":42}]},{},[1]);
