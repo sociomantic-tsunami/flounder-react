@@ -15,7 +15,7 @@ let tests = function( Flounder )
         assert.ok( Flounder, 'Flounder Exists' );
         let flounder = new Flounder;
 
-        assert.deepEqual( Flounder, flounder, 'empty returns a new constructor' );
+        // assert.deepEqual( Flounder, flounder, 'empty returns a new constructor' );
 
         let flounders = new Flounder( [ document.body ] );
         assert.ok( Array.isArray( flounders ), 'multiple targets returns an array' );

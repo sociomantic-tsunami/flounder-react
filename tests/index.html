@@ -12,8 +12,12 @@
     </body>
     <script src="../node_modules/qunitjs/qunit/qunit.js"></script>
 
-    <script src="tests.dist.js"></script>
+    <script src="./tests.dist.js"></script>
+
     <script type="text/javascript">
-        document.getElementsByTagName( 'TITLE' )[0].textContent = 'Flounder - ' + Flounder.version;
+        window.onload = function()
+        {
+            // document.title.textContent = 'Flounder - ' + Flounder.version;
+        };
     </script>
 </html>

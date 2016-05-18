@@ -1,6 +1,6 @@
 /* global document, QUnit  */
 
-import classes from 'flounder/src/core/classes';
+import classes from '../../src/core/classes';
 
 let tests = function( Flounder )
 {

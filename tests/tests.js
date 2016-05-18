@@ -2,18 +2,18 @@
 /* jshint globalstrict: true */
 'use strict';
 
-import React, { Component } from 'react';
-import ReactDOM             from 'react-dom';
+import { React, Component, ReactDOM, FlounderReact } from '../src/flounder.react.jsx';
+import utils            from '../src/core/utils';
+import classes          from '../src/core/classes';
 
-import Flounder 			from '../src/flounder.react.jsx';
-import utils            	from 'flounder/src/core/utils';
-import classes              from 'flounder/src/core/classes';
+import constructorTest   from './unit/constructorTest';
+import flounderTest      from './unit/flounderTest';
+import utilsTest         from './unit/utilsTest';
+import versionTest       from './unit/versionTest';
 
-import constructorTest  	from './unit/constructorTest';
-import flounderTest     	from './unit/flounderTest';
-import utilsTest        	from './unit/utilsTest';
-import versionTest      	from './unit/versionTest';
+let Flounder = FlounderReact;
 
+console.log( Flounder );
 class Tests
 {
     constructor()
