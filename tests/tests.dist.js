@@ -20264,18 +20264,18 @@ var api = {
         var originalTarget = this.originalTarget;
         var tagName = originalTarget.tagName;
 
-        refs.flounder.flounder = originalTarget.flounder = this.target.flounder = null;
-
         if (tagName === 'INPUT' || tagName === 'SELECT') {
+            var target = originalTarget.nextElementSibling;
+
             if (tagName === 'SELECT') {
                 var firstOption = originalTarget[0];
 
                 if (firstOption && firstOption.textContent === this.props.placeholder) {
                     originalTarget.removeChild(firstOption);
                 }
+            } else if (tagName === 'INPUT') {
+                target = refs.flounder.parentNode;
             }
-
-            var target = originalTarget.nextElementSibling;
 
             try {
                 target.parentNode.removeChild(target);
@@ -20293,6 +20293,8 @@ var api = {
                 throw ' : this flounder may have already been removed';
             }
         }
+
+        refs.flounder.flounder = originalTarget.flounder = this.target.flounder = null;
     },
 
     /**
@@ -20622,12 +20624,12 @@ var api = {
      * @return _Object_ rebuilt flounder object
      */
     rebuild: function rebuild(data, props) {
-        if (props || !props && (typeof data === 'string' || typeof data.length !== 'number')) {
-            this.reconfigureFlounder(data, props);
+        if (props || !props && (typeof data === 'string' || data && typeof data.length !== 'number')) {
+            return this.reconfigure(data, props);
         }
 
-        props = this.props;
         data = this.data = data || this.data;
+        props = this.props;
         var refs = this.refs;
         var _select = refs.select;
 
@@ -20684,7 +20686,7 @@ var api = {
 
             if (typeof _ret5 === 'object') return _ret5.v;
         } else {
-            var data = refs.data;
+            var data = this.data;
             var _length3 = data.length;
 
             if (index < 0) {
@@ -20785,10 +20787,10 @@ var api = {
             var values = this.refs.selectOptions.map(function (el) {
                 return el.value === value + '' ? el.index : null;
             }).filter(function (a) {
-                return !!a;
+                return a === 0 || !!a;
             });
 
-            return value ? this.setByIndex(values, multiple, programmatic) : null;
+            return values.length !== 0 ? this.setByIndex(values, multiple, programmatic) : null;
         }
     }
 };
@@ -20873,74 +20875,32 @@ var build = {
     bindThis: function bindThis() {
         var _this = this;
 
-        ['catchBodyClick', 'checkClickTarget', 'checkFlounderKeypress', 'clearPlaceholder', 'clickSet', 'divertTarget', 'displayMultipleTags', 'firstTouchController', 'fuzzySearch', 'removeMultiTag', 'setKeypress', 'setSelectValue', 'toggleList'].forEach(function (func) {
+        ['catchBodyClick', 'checkClickTarget', 'checkFlounderKeypress', 'clearPlaceholder', 'clickSet', 'divertTarget', 'displayMultipleTags', 'firstTouchController', 'fuzzySearch', 'removeMultiTag', 'setKeypress', 'setSelectValue', 'toggleList', 'toggleListSearchClick'].forEach(function (func) {
             _this[func] = _this[func].bind(_this);
             _this[func].___isBound = true;
         });
     },
 
     /**
-     * ## buildDom
+     * ## buildArrow
      *
-     * builds flounder
+     * builds the arrow and the
      *
-     * @return _Void_
+     * @param {Object} props property object
+     * @param {Function} constructElement ref to this.constructElement
+     *
+     * @return {DOMElement} arrow
      */
-    buildDom: function buildDom() {
-        this.refs = {};
+    buildArrow: function buildArrow(props, constructElement) {
+        if (props.disableArrow) {
+            return null;
+        } else {
+            var arrow = constructElement({ className: _classes2['default'].ARROW });
+            var arrowInner = constructElement({ className: _classes2['default'].ARROW_INNER });
+            arrow.appendChild(arrowInner);
 
-        var constructElement = _utils2['default'].constructElement;
-
-        var wrapperClass = _classes2['default'].MAIN_WRAPPER;
-        var wrapper = _utils2['default'].constructElement({ className: this.wrapperClass ? wrapperClass + ' ' + this.wrapperClass : wrapperClass });
-        var flounderClass = _classes2['default'].MAIN;
-        var flounder = constructElement({ className: this.flounderClass ? flounderClass + '  ' + this.flounderClass : flounderClass });
-
-        flounder.setAttribute('aria-hidden', true);
-        flounder.tabIndex = 0;
-        wrapper.appendChild(flounder);
-
-        var select = this.initSelectBox(wrapper);
-        select.tabIndex = -1;
-
-        if (this.multiple === true) {
-            select.setAttribute('multiple', '');
+            return arrow;
         }
-
-        var data = this.data;
-        var defaultValue = this._default = (0, _defaults.setDefaultOption)(this, this.props, data);
-        var selected = constructElement({ className: _classes2['default'].SELECTED_DISPLAYED,
-            'data-value': defaultValue.value, 'data-index': defaultValue.index || -1 });
-        selected.innerHTML = defaultValue.text;
-
-        var multiTagWrapper = this.multiple ? constructElement({ className: _classes2['default'].MULTI_TAG_LIST }) : null;
-
-        var arrow = constructElement({ className: _classes2['default'].ARROW });
-        var optionsListWrapper = constructElement({ className: _classes2['default'].OPTIONS_WRAPPER + '  ' + _classes2['default'].HIDDEN });
-        var optionsList = constructElement({ className: _classes2['default'].LIST });
-        optionsList.setAttribute('role', 'listbox');
-        optionsListWrapper.appendChild(optionsList);
-
-        [selected, multiTagWrapper, arrow, optionsListWrapper].forEach(function (el) {
-            if (el) {
-                flounder.appendChild(el);
-            }
-        });
-
-        var search = this.addSearch(flounder);
-        var selectOptions = undefined;
-
-        var _buildData = this.buildData(defaultValue, data, optionsList, select);
-
-        var _buildData2 = _slicedToArray(_buildData, 2);
-
-        data = _buildData2[0];
-        selectOptions = _buildData2[1];
-
-        this.target.appendChild(wrapper);
-
-        this.refs = { wrapper: wrapper, flounder: flounder, selected: selected, arrow: arrow, optionsListWrapper: optionsListWrapper,
-            search: search, multiTagWrapper: multiTagWrapper, optionsList: optionsList, select: select, data: data, selectOptions: selectOptions };
     },
 
     /**
@@ -20966,7 +20926,8 @@ var build = {
         var selectedClass = this.selectedClass;
         var escapeHTML = _utils2['default'].escapeHTML;
         var addClass = _utils2['default'].addClass;
-        var selectRef = this.refs.select;
+        var refs = this.refs;
+        var selectRef = refs.select;
         var allowHTML = this.allowHTML;
 
         /**
@@ -21044,7 +21005,11 @@ var build = {
                 var selectChild = selectRef.children[i];
                 selectOption = selectChild;
                 selectChild.setAttribute('value', selectChild.value);
-                addClass(selectChild, 'flounder--option--tag');
+
+                if (selectChild.disabled === true && data[i]) {
+                    addClass(data[i], _classes2['default'].DISABLED);
+                }
+                addClass(selectChild, _classes2['default'].OPTION_TAG);
             }
 
             if (i === defaultValue.index) {
@@ -21078,7 +21043,15 @@ var build = {
                     section.appendChild(header);
                     optionsList.appendChild(section);
 
-                    dataObj.data.forEach(function (d) {
+                    var dataObjData = dataObj.data;
+                    dataObjData.forEach(function (d, i) {
+                        if (typeof d !== 'object') {
+                            d = dataObjData[i] = {
+                                text: d,
+                                value: d
+                            };
+                        }
+
                         data[index] = buildDiv(d, index);
                         section.appendChild(data[index]);
                         selectOptions[index] = buildOption(d, index);
@@ -21094,6 +21067,73 @@ var build = {
         });
 
         return [data, selectOptions];
+    },
+
+    /**
+     * ## buildDom
+     *
+     * builds flounder
+     *
+     * @return _Void_
+     */
+    buildDom: function buildDom() {
+        var props = this.props;
+        this.refs = {};
+
+        var constructElement = _utils2['default'].constructElement;
+
+        var wrapperClass = _classes2['default'].MAIN_WRAPPER;
+        var wrapper = _utils2['default'].constructElement({ className: this.wrapperClass ? wrapperClass + ' ' + this.wrapperClass : wrapperClass });
+        var flounderClass = _classes2['default'].MAIN;
+        var flounder = constructElement({ className: this.flounderClass ? flounderClass + '  ' + this.flounderClass : flounderClass });
+
+        flounder.setAttribute('aria-hidden', true);
+        flounder.tabIndex = 0;
+        wrapper.appendChild(flounder);
+
+        var select = this.initSelectBox(wrapper);
+        select.tabIndex = -1;
+
+        if (this.multiple === true) {
+            select.setAttribute('multiple', '');
+        }
+
+        var data = this.data;
+        var defaultValue = this._default = (0, _defaults.setDefaultOption)(this, this.props, data);
+        var selected = constructElement({ className: _classes2['default'].SELECTED_DISPLAYED,
+            'data-value': defaultValue.value, 'data-index': defaultValue.index || -1 });
+        selected.innerHTML = defaultValue.text;
+
+        var multiTagWrapper = this.multiple ? constructElement({ className: _classes2['default'].MULTI_TAG_LIST }) : null;
+
+        var search = this.addSearch(flounder);
+
+        var optionsListWrapper = constructElement({ className: _classes2['default'].OPTIONS_WRAPPER + '  ' + _classes2['default'].HIDDEN });
+        var optionsList = constructElement({ className: _classes2['default'].LIST });
+        optionsList.setAttribute('role', 'listbox');
+        optionsListWrapper.appendChild(optionsList);
+
+        var arrow = this.buildArrow(props, constructElement);
+
+        [selected, multiTagWrapper, optionsListWrapper, arrow].forEach(function (el) {
+            if (el) {
+                flounder.appendChild(el);
+            }
+        });
+
+        var selectOptions = undefined;
+
+        var _buildData = this.buildData(defaultValue, data, optionsList, select);
+
+        var _buildData2 = _slicedToArray(_buildData, 2);
+
+        data = _buildData2[0];
+        selectOptions = _buildData2[1];
+
+        this.target.appendChild(wrapper);
+
+        this.refs = { wrapper: wrapper, flounder: flounder, selected: selected, arrow: arrow, optionsListWrapper: optionsListWrapper,
+            search: search, multiTagWrapper: multiTagWrapper, optionsList: optionsList, select: select, data: data, selectOptions: selectOptions };
     },
 
     /**
@@ -21212,6 +21252,7 @@ var build = {
             props.data = data;
         } else if (!props && typeof data === 'object') {
             props = data;
+            console.log(props);
             props.data = props.data || this.data;
         } else {
             props.data = data || props.data || this.data;
@@ -21256,13 +21297,15 @@ Object.defineProperty(exports, '__esModule', {
     value: true
 });
 var classes = {
-    ARROW: 'flounder__arrow',
+    ARROW: 'flounder__arrow--wrapper',
+    ARROW_INNER: 'flounder__arrow--inner',
     DESCRIPTION: 'flounder__option--description',
     DISABLED: 'flounder__disabled',
     DISABLED_OPTION: 'flounder__disabled--option',
     HEADER: 'flounder__header',
     HIDDEN: 'flounder--hidden',
     HIDDEN_IOS: 'flounder--hidden--ios',
+    HOVER: 'flounder__hover',
     LIST: 'flounder__list',
     LOADING: 'flounder__loading',
     LOADING_FAILED: 'flounder__loading--failed',
@@ -21300,6 +21343,10 @@ var _classes = require('./classes');
 
 var _classes2 = _interopRequireDefault(_classes);
 
+var _utils = require('./utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
 var defaultOptions = {
     allowHTML: false,
     classes: {
@@ -21312,6 +21359,7 @@ var defaultOptions = {
     defaultEmpty: false,
     defaultIndex: false,
     defaultValue: false,
+    disableArrow: false,
     keepChangesOnDestroy: false,
     multiple: false,
     multipleTags: false,
@@ -21323,6 +21371,7 @@ var defaultOptions = {
     onInit: function onInit() {},
     onOpen: function onOpen(e, selectedValues) {},
     onSelect: function onSelect(e, selectedValues) {},
+    openOnHover: false,
     placeholder: 'Please choose an option',
     search: false,
     selectDataOverride: false
@@ -21387,7 +21436,7 @@ var defaults = {
             };
 
             if (select) {
-                var escapedText = self.allowHTML ? _default.text : self.escapeHTML(_default.text);
+                var escapedText = self.allowHTML ? _default.text : _utils2['default'].escapeHTML(_default.text);
 
                 if (!select[0] || select[0].value !== '') {
                     var defaultOption = self.constructElement({ tagname: 'option',
@@ -21502,11 +21551,13 @@ var defaults = {
                 }
             }
 
-            def = [setIndexDefault(_data), setValueDefault(_data), configObj.multiple ? setPlaceholderDefault(self, _data) : setIndexDefault(_data, 0)];
+            // default prio
+            def = configObj.defaultIndex ? setIndexDefault(_data) : null;
+            def = !def && configObj.defaultValue ? setValueDefault(_data) : def;
+            def = !def && configObj.multiple ? setPlaceholderDefault(self, _data) : def;
+            def = !def ? setIndexDefault(_data, 0) : def;
 
-            return def.filter(function (_v) {
-                return _v;
-            })[0];
+            return def;
         };
 
         return checkDefaultPriority();
@@ -21516,7 +21567,7 @@ var defaults = {
 exports['default'] = defaults;
 module.exports = exports['default'];
 
-},{"./classes":173}],175:[function(require,module,exports){
+},{"./classes":173,"./utils":178}],175:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -21550,6 +21601,10 @@ var events = {
         var refs = this.refs;
         refs.selected.addEventListener('click', this.firstTouchController);
         refs.select.addEventListener('focus', this.firstTouchController);
+
+        if (this.props.openOnHover) {
+            refs.wrapper.addEventListener('mouseenter', this.firstTouchController);
+        }
     },
 
     /**
@@ -21566,7 +21621,14 @@ var events = {
         refs.select.addEventListener(changeEvent, this.divertTarget);
 
         refs.flounder.addEventListener('keydown', this.checkFlounderKeypress);
-        refs.selected.addEventListener('click', this.toggleList);
+
+        if (props.openOnHover) {
+            var wrapper = refs.wrapper;
+            wrapper.addEventListener('mouseenter', this.toggleList);
+            wrapper.addEventListener('mouseleave', this.toggleList);
+        } else {
+            refs.selected.addEventListener('click', this.toggleList);
+        }
 
         this.addFirstTouchListeners();
         this.addOptionsListeners();
@@ -21588,9 +21650,20 @@ var events = {
 
         this.refs.data.forEach(function (dataObj, i) {
             if (dataObj.tagName === 'DIV') {
+                dataObj.addEventListener('mouseenter', _this.addHoverClass);
+                dataObj.addEventListener('mouseleave', _this.removeHoverClass);
+
                 dataObj.addEventListener('click', _this.clickSet);
             }
         });
+    },
+
+    addHoverClass: function addHoverClass() {
+        _utils2['default'].addClass(this, _classes2['default'].HOVER);
+    },
+
+    removeHoverClass: function removeHoverClass() {
+        _utils2['default'].removeClass(this, _classes2['default'].HOVER);
     },
 
     /**
@@ -21644,7 +21717,7 @@ var events = {
      */
     addSearchListeners: function addSearchListeners() {
         var search = this.refs.search;
-        search.addEventListener('click', this.toggleList);
+        search.addEventListener('click', this.toggleListSearchClick);
         search.addEventListener('keyup', this.fuzzySearch);
         search.addEventListener('focus', this.clearPlaceholder);
     },
@@ -21689,7 +21762,6 @@ var events = {
     catchBodyClick: function catchBodyClick(e) {
         if (!this.checkClickTarget(e)) {
             this.toggleList(e);
-
             this.addPlaceholder();
         }
     },
@@ -21705,8 +21777,7 @@ var events = {
      * @return _Boolean_
      */
     checkClickTarget: function checkClickTarget(e, target) {
-        target = target || this.refs.data[e.target.getAttribute('data-index')] || e.target;
-
+        target = target || e.target;
         if (target === document) {
             return false;
         } else if (target === this.refs.flounder) {
@@ -21836,6 +21907,10 @@ var events = {
 
         refs.selected.removeEventListener('click', this.firstTouchController);
         refs.select.removeEventListener('focus', this.firstTouchController);
+
+        if (this.props.openOnHover) {
+            refs.wrapper.removeEventListener('mouseenter', this.firstTouchController);
+        }
     },
 
     /**
@@ -22124,6 +22199,19 @@ var events = {
     },
 
     /**
+     * ## toggleListSearchClick
+     *
+     * toggleList wrapper for search.  only triggered if flounder is closed
+     *
+     * @return _Void_
+     */
+    toggleListSearchClick: function toggleListSearchClick(e) {
+        if (!_utils2['default'].hasClass(this.refs.wrapper, 'open')) {
+            this.toggleList(e, 'open');
+        }
+    },
+
+    /**
      * ## toggleList
      *
      * on click of flounder--selected, this shows or hides the options list
@@ -22137,16 +22225,17 @@ var events = {
         var optionsList = refs.optionsListWrapper;
         var wrapper = refs.wrapper;
         var hasClass = _utils2['default'].hasClass;
+        var type = e.type;
 
-        if (force === 'open' || force !== 'close' && _utils2['default'].hasClass(optionsList, _classes2['default'].HIDDEN)) {
-            if (e.type === 'keydown') {
+        if (type === 'mouseleave' || force === 'close' || !hasClass(optionsList, _classes2['default'].HIDDEN)) {
+            this.toggleList.justOpened = false;
+            this.toggleClosed(e, optionsList, refs, wrapper);
+        } else if (type === 'mouseenter' || force === 'open' || force !== 'close' && _utils2['default'].hasClass(optionsList, _classes2['default'].HIDDEN)) {
+            if (type === 'keydown') {
                 this.toggleList.justOpened = true;
             }
 
             this.toggleOpen(e, optionsList, refs, wrapper);
-        } else if (force === 'close' || !hasClass(optionsList, _classes2['default'].HIDDEN)) {
-            this.toggleList.justOpened = false;
-            this.toggleClosed(e, optionsList, refs, wrapper);
         }
     },
 
@@ -22508,6 +22597,10 @@ var Flounder = (function () {
                     } else {
                         this.fuzzySearchReset();
                     }
+                } else if (keyCode === 27) {
+                    this.fuzzySearchReset();
+                    this.toggleList(e, 'close');
+                    this.addPlaceholder();
                 } else {
                     this.setSelectValue(e);
                     this.setKeypress(e);
@@ -22571,8 +22664,8 @@ var Flounder = (function () {
                 this.multiple = true;
                 this.selectedClass += '  ' + _classes3['default'].SELECTED_HIDDEN;
 
-                if (!props.placeholder) {
-                    props.placeholder = _defaults.defaultOptions.placeholder;
+                if (!this.placeholder) {
+                    this.placeholder = _defaults.defaultOptions.placeholder;
                 }
             }
         }
@@ -23395,7 +23488,7 @@ module.exports = exports['default'];
 },{"./classes":173,"microbejs/src/modules/http":30}],179:[function(require,module,exports){
 'use strict';
 
-module.exports = '0.6.3';
+module.exports = '0.7.7';
 
 },{}],180:[function(require,module,exports){
 
@@ -23554,7 +23647,7 @@ var FlounderReact = (function (_Component) {
         value: function prepOptions(data) {
             var _this = this;
 
-            data.forEach(function (dataObj, i) {
+            return data.map(function (dataObj, i) {
                 if (typeof dataObj === 'string') {
                     dataObj = {
                         text: dataObj,
@@ -23563,9 +23656,9 @@ var FlounderReact = (function (_Component) {
                 }
 
                 dataObj.text = _this.allowHTML ? dataObj.text : _coreUtils2['default'].escapeHTML(dataObj.text);
-            });
 
-            return data;
+                return dataObj;
+            });
         }
 
         /**
@@ -23601,7 +23694,14 @@ var FlounderReact = (function (_Component) {
             var data = this.data = this.prepOptions(props.data || this.data);
 
             var handleChange = this.handleChange.bind(this);
+
+            var multipleTags = this.multipleTags;
             var multiple = this.multiple;
+
+            if (multipleTags === true) {
+                multiple = this.multiple = true;
+            }
+
             var searchBool = this.search;
 
             var defaultValue = this._default = (0, _coreDefaults.setDefaultOption)(this, props, data);
@@ -23618,14 +23718,14 @@ var FlounderReact = (function (_Component) {
                 { ref: 'wrapper', className: _coreClasses2['default'].MAIN_WRAPPER + wrapperClass },
                 _react2['default'].createElement(
                     'div',
-                    { ref: 'flounder', tabIndex: '0', className: _coreClasses2['default'].MAIN + flounderClass },
+                    { ref: 'flounder', tabIndex: '0', className: _coreClasses2['default'].MAIN + flounderClass, 'aria-hidden': true },
+                    searchBool ? _react2['default'].createElement('input', { ref: 'search', type: 'text', className: _coreClasses2['default'].SEARCH }) : null,
                     _react2['default'].createElement(
                         'div',
                         { ref: 'selected', className: _coreClasses2['default'].SELECTED_DISPLAYED, 'data-value': defaultValue.value },
                         defaultValue.text
                     ),
-                    multiple ? _react2['default'].createElement('div', { ref: 'multiTagWrapper', className: _coreClasses2['default'].MULTI_TAG_LIST, multiple: true }) : null,
-                    _react2['default'].createElement('div', { ref: 'arrow', className: _coreClasses2['default'].ARROW }),
+                    multipleTags ? _react2['default'].createElement('div', { ref: 'multiTagWrapper', className: _coreClasses2['default'].MULTI_TAG_LIST }) : null,
                     _react2['default'].createElement(
                         'div',
                         { ref: 'optionsListWrapper', className: _coreClasses2['default'].OPTIONS_WRAPPER + '  ' + _coreClasses2['default'].HIDDEN },
@@ -23654,7 +23754,11 @@ var FlounderReact = (function (_Component) {
                             })
                         )
                     ),
-                    searchBool ? _react2['default'].createElement('input', { ref: 'search', type: 'text', className: _coreClasses2['default'].SEARCH }) : null
+                    _react2['default'].createElement(
+                        'div',
+                        { className: _coreClasses2['default'].ARROW },
+                        _react2['default'].createElement('div', { className: _coreClasses2['default'].ARROW_INNER })
+                    )
                 ),
                 _react2['default'].createElement(
                     'select',
@@ -23750,14 +23854,10 @@ var _unitVersionTest = require('./unit/versionTest');
 
 var _unitVersionTest2 = _interopRequireDefault(_unitVersionTest);
 
-var Flounder = _srcFlounderReactJsx.FlounderReact;
-
-console.log(Flounder);
-
 var Tests = function Tests() {
     _classCallCheck(this, Tests);
 
-    window.Flounder = Flounder;
+    window.Flounder = _srcFlounderReactJsx.FlounderReact;
 
     return this;
 };
@@ -23767,10 +23867,10 @@ var Tests = function Tests() {
 _srcCoreUtils2['default'].extendClass(Tests, _srcCoreUtils2['default']);
 var tests = new Tests();
 
-(0, _unitConstructorTest2['default'])(Flounder);
-(0, _unitFlounderTest2['default'])(Flounder);
-(0, _unitUtilsTest2['default'])(Flounder, _srcCoreUtils2['default']);
-(0, _unitVersionTest2['default'])(Flounder);
+(0, _unitConstructorTest2['default'])(_srcFlounderReactJsx.FlounderReact, _srcFlounderReactJsx.React, _srcFlounderReactJsx.ReactDOM);
+(0, _unitFlounderTest2['default'])(_srcFlounderReactJsx.FlounderReact, _srcFlounderReactJsx.React, _srcFlounderReactJsx.ReactDOM);
+(0, _unitUtilsTest2['default'])(_srcFlounderReactJsx.FlounderReact, _srcFlounderReactJsx.React, _srcFlounderReactJsx.ReactDOM, _srcCoreUtils2['default']);
+(0, _unitVersionTest2['default'])(_srcFlounderReactJsx.FlounderReact, _srcFlounderReactJsx.React, _srcFlounderReactJsx.ReactDOM);
 
 exports['default'] = tests;
 module.exports = exports['default'];
@@ -23782,7 +23882,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-var tests = function tests(Flounder) {
+var tests = function tests(Flounder, React, ReactDOM) {
     QUnit.module('Flounder constructor');
 
     /*
@@ -23793,20 +23893,10 @@ var tests = function tests(Flounder) {
      */
     QUnit.test('Flounder', function (assert) {
         assert.ok(Flounder, 'Flounder Exists');
-        var flounder = new Flounder();
 
-        assert.deepEqual(Flounder, flounder, 'empty returns a new constructor');
+        var flounder = ReactDOM.render(React.createElement(Flounder, {}), document.querySelector('.flounder-test__target'));
 
-        var flounders = new Flounder([document.body]);
-        assert.ok(Array.isArray(flounders), 'multiple targets returns an array');
-        assert.ok(flounders[0] instanceof Flounder, 'of flounders');
-        flounders[0].destroy();
-
-        flounder = new Flounder(document.body);
         assert.ok(flounder instanceof Flounder, 'a single target makes a flounder');
-        flounder.destroy();
-
-        flounder = new Flounder(document.body);
 
         var ref = flounder.refs.flounder.flounder instanceof Flounder;
         var oTarget = flounder.originalTarget.flounder instanceof Flounder;
@@ -23840,7 +23930,7 @@ var _srcCoreClasses = require('../../src/core/classes');
 
 var _srcCoreClasses2 = _interopRequireDefault(_srcCoreClasses);
 
-var tests = function tests(Flounder) {
+var tests = function tests(Flounder, React, ReactDOM) {
     QUnit.module('flounder.js');
 
     /*
@@ -23851,16 +23941,15 @@ var tests = function tests(Flounder) {
      * @test of flounders
      */
     QUnit.test('arrayOfFlounders', function (assert) {
-        var flounder = new Flounder(document.body);
+        var flounder = ReactDOM.render(React.createElement(Flounder, {}), document.querySelector('.flounder-test__target'));
         assert.ok(flounder.arrayOfFlounders, 'exists');
 
-        var flounders = flounder.arrayOfFlounders([document.body], flounder.props);
-        assert.ok(Array.isArray(flounders), 'multiple targets returns an array');
-        assert.ok(flounders[0] instanceof Flounder, 'of flounders');
+        flounder.destroy();
+        // let flounders   = flounder.arrayOfFlounders( [ document.querySelector( '.flounder-test__target' ) ], flounder.props );
+        // assert.ok( Array.isArray( flounders ), 'multiple targets returns an array' );
+        // assert.ok( flounders[0] instanceof Flounder, 'of flounders' );
 
-        flounders.forEach(function (el) {
-            el.destroy();
-        });
+        // flounders.forEach( function( el ){ el.destroy() } );
     });
 
     /*
@@ -23870,7 +23959,7 @@ var tests = function tests(Flounder) {
      * @test events are removed
      */
     QUnit.test('componentWillUnmount', function (assert) {
-        var flounder = new Flounder(document.body);
+        var flounder = ReactDOM.render(React.createElement(Flounder, {}), document.querySelector('.flounder-test__target'));
         assert.ok(flounder.componentWillUnmount, 'exists');
 
         var refs = flounder.refs;
@@ -23896,7 +23985,11 @@ var tests = function tests(Flounder) {
     QUnit.test('displayMultipleTags', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { multiple: true, multipleTags: true, data: data });
+        var flounder = ReactDOM.render(React.createElement(Flounder, {
+            multiple: true,
+            multipleTags: true,
+            data: data
+        }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.displayMultipleTags, 'exists');
 
@@ -23925,7 +24018,7 @@ var tests = function tests(Flounder) {
     QUnit.test('displaySelected', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0 });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0 }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.displaySelected, 'exists');
         flounder.setByIndex(1);
@@ -23944,7 +24037,7 @@ var tests = function tests(Flounder) {
     QUnit.test('fuzzySearch', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, search: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, search: true }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.fuzzySearch, 'exists');
 
@@ -23974,7 +24067,7 @@ var tests = function tests(Flounder) {
     QUnit.test('fuzzySearchReset', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, search: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, search: true }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.fuzzySearchReset, 'exists');
 
@@ -24003,7 +24096,8 @@ var tests = function tests(Flounder) {
     QUnit.test('initializeOptions', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, search: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, search: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.initializeOptions, 'exists');
 
         assert.ok(flounder.data[0].text === 'doge', 'correctly sets data');
@@ -24021,7 +24115,8 @@ var tests = function tests(Flounder) {
     QUnit.test('onRender', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, search: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, search: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.onRender, 'exists');
 
         flounder.destroy();
@@ -24033,12 +24128,18 @@ var tests = function tests(Flounder) {
      * @test exists
      */
     QUnit.test('removeMultiTag', function (assert) {
+        window.React = React;
+        window.ReactDOM = ReactDOM;
+        window.Flounder = Flounder;
+
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, multipleTags: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.removeMultiTag, 'exists');
 
-        var refs = document.body.flounder.refs;
+        var refs = document.querySelector('.flounder-test__target').flounder.refs;
+        console.log(refs);
         var doge = refs.data[1];
         doge.click();
 
@@ -24058,10 +24159,11 @@ var tests = function tests(Flounder) {
     QUnit.test('removeSelectedClass', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, multipleTags: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.removeSelectedClass, 'exists');
 
-        var refs = document.body.flounder.refs;
+        var refs = document.querySelector('.flounder-test__target').flounder.refs;
         refs.data[1].click();
         refs.data[2].click();
 
@@ -24081,7 +24183,8 @@ var tests = function tests(Flounder) {
     QUnit.test('removeSelectedValue', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, multipleTags: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.removeSelectedValue, 'exists');
 
         var refs = flounder.refs;
@@ -24103,7 +24206,8 @@ var tests = function tests(Flounder) {
     QUnit.test('setTextMultiTagIndent', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data, defaultIndex: 0, multipleTags: true });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.setTextMultiTagIndent, 'exists');
 
         var refs = flounder.refs;
@@ -24132,7 +24236,8 @@ var tests = function tests(Flounder) {
     QUnit.test('sortData', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = new Flounder(document.body, { data: data });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data }), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.sortData, 'exists');
 
         var sortedData = flounder.sortData(['doge', 'moon']);
@@ -24151,7 +24256,8 @@ var tests = function tests(Flounder) {
      * @test exists
      */
     QUnit.test('version', function (assert) {
-        var flounder = new Flounder(document.body);
+        var flounder = ReactDOM.render(React.createElement(Flounder, {}), document.querySelector('.flounder-test__target'));
+
         assert.ok(flounder.version, 'exists');
 
         assert.equal(Flounder.version, flounder.version, 'shows the version');
@@ -24181,10 +24287,7 @@ var tests = function tests(Flounder) {
             value: "item2"
         }];
 
-        var container = document.createElement('div');
-        document.body.appendChild(container);
-
-        var flounder = new Flounder(container, { data: data });
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
 
         flounder.setByValue('item1');
         flounder.refs.selected.click();
@@ -24211,7 +24314,7 @@ Object.defineProperty(exports, '__esModule', {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var tests = function tests(Flounder, utils) {
+var tests = function tests(Flounder, React, ReactDOM, utils) {
     QUnit.module('utils.js');
 
     /*
@@ -24514,7 +24617,7 @@ var _packageJson = require('../../package.json');
 
 var _packageJson2 = _interopRequireDefault(_packageJson);
 
-var tests = function tests(Flounder) {
+var tests = function tests(Flounder, React, ReactDOM) {
     QUnit.module('version.js');
 
     /*

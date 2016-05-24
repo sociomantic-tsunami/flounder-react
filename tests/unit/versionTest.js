@@ -3,7 +3,7 @@
 import version  from '../../src/version.js';
 import _package from '../../package.json';
 
-let tests = function( Flounder )
+let tests = function( Flounder, React, ReactDOM )
 {
     QUnit.module( 'version.js' );
 

@@ -17,6 +17,11 @@ const events = {
         let refs = this.refs;
         refs.selected.addEventListener( 'click', this.firstTouchController );
         refs.select.addEventListener( 'focus', this.firstTouchController );
+
+        if ( this.props.openOnHover )
+        {
+            refs.wrapper.addEventListener( 'mouseenter', this.firstTouchController );
+        }
     },
 
 
@@ -29,13 +34,24 @@ const events = {
      */
     addListeners : function( refs, props )
     {
-        let ios = this.isIos;
+        let ios         = this.isIos;
         let changeEvent = ios ? 'blur' : 'change';
+
 
         refs.select.addEventListener( changeEvent, this.divertTarget );
 
         refs.flounder.addEventListener( 'keydown', this.checkFlounderKeypress );
-        refs.selected.addEventListener( 'click', this.toggleList );
+
+        if ( props.openOnHover )
+        {
+            let wrapper = refs.wrapper;
+            wrapper.addEventListener( 'mouseenter', this.toggleList );
+            wrapper.addEventListener( 'mouseleave', this.toggleList );
+        }
+        else
+        {
+            refs.selected.addEventListener( 'click', this.toggleList );
+        }
 
         this.addFirstTouchListeners();
         this.addOptionsListeners();
@@ -60,9 +76,24 @@ const events = {
         {
             if ( dataObj.tagName === 'DIV' )
             {
+                dataObj.addEventListener( 'mouseenter', this.addHoverClass );
+                dataObj.addEventListener( 'mouseleave', this.removeHoverClass );
+
                 dataObj.addEventListener( 'click', this.clickSet );
             }
         } );
+    },
+
+
+    addHoverClass : function()
+    {
+        utils.addClass( this, classes.HOVER );
+    },
+
+
+    removeHoverClass : function()
+    {
+        utils.removeClass( this, classes.HOVER );
     },
 
 
@@ -126,7 +157,7 @@ const events = {
     addSearchListeners : function()
     {
         let search = this.refs.search;
-        search.addEventListener( 'click', this.toggleList );
+        search.addEventListener( 'click', this.toggleListSearchClick );
         search.addEventListener( 'keyup', this.fuzzySearch );
         search.addEventListener( 'focus', this.clearPlaceholder );
     },
@@ -177,7 +208,6 @@ const events = {
         if ( ! this.checkClickTarget( e ) )
         {
             this.toggleList( e );
-
             this.addPlaceholder();
         }
     },
@@ -195,10 +225,7 @@ const events = {
      */
     checkClickTarget : function( e, target )
     {
-        target = target ||
-                    this.refs.data[ e.target.getAttribute( 'data-index' ) ] ||
-                    e.target;
-
+        target = target || e.target;
         if ( target === document )
         {
             return false;
@@ -356,6 +383,11 @@ const events = {
 
         refs.selected.removeEventListener( 'click', this.firstTouchController );
         refs.select.removeEventListener( 'focus', this.firstTouchController );
+
+        if ( this.props.openOnHover )
+        {
+            refs.wrapper.removeEventListener( 'mouseenter', this.firstTouchController );
+        }
     },
 
 
@@ -695,6 +727,22 @@ const events = {
 
 
     /**
+     * ## toggleListSearchClick
+     *
+     * toggleList wrapper for search.  only triggered if flounder is closed
+     *
+     * @return _Void_
+     */
+    toggleListSearchClick : function( e )
+    {
+        if ( !utils.hasClass( this.refs.wrapper, 'open' ) )
+        {
+            this.toggleList( e, 'open' );
+        }
+    },
+
+
+    /**
      * ## toggleList
      *
      * on click of flounder--selected, this shows or hides the options list
@@ -709,20 +757,23 @@ const events = {
         let optionsList = refs.optionsListWrapper;
         let wrapper     = refs.wrapper;
         let hasClass    = utils.hasClass;
+        let type        = e.type;
 
-        if ( force === 'open' || force !== 'close' && utils.hasClass( optionsList, classes.HIDDEN ) )
+        if ( type === 'mouseleave' || force === 'close' ||
+            !hasClass( optionsList, classes.HIDDEN ) )
         {
-            if ( e.type === 'keydown' )
+            this.toggleList.justOpened = false;
+            this.toggleClosed( e, optionsList, refs, wrapper );
+        }
+        else if ( type === 'mouseenter' || force === 'open' ||
+            force !== 'close' && utils.hasClass( optionsList, classes.HIDDEN ) )
+        {
+            if ( type === 'keydown' )
             {
                 this.toggleList.justOpened = true;
             }
 
             this.toggleOpen( e, optionsList, refs, wrapper );
-        }
-        else if ( force === 'close' || !hasClass( optionsList, classes.HIDDEN ) )
-        {
-            this.toggleList.justOpened = false;
-            this.toggleClosed( e, optionsList, refs, wrapper );
         }
     },
 

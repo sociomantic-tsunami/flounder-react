@@ -11,14 +11,12 @@ import flounderTest      from './unit/flounderTest';
 import utilsTest         from './unit/utilsTest';
 import versionTest       from './unit/versionTest';
 
-let Flounder = FlounderReact;
 
-console.log( Flounder );
 class Tests
 {
     constructor()
     {
-        window.Flounder = Flounder;
+        window.Flounder = FlounderReact;
 
         return this;
     }
@@ -28,9 +26,9 @@ class Tests
 utils.extendClass( Tests, utils );
 let tests = new Tests;
 
-constructorTest( Flounder );
-flounderTest( Flounder );
-utilsTest( Flounder, utils );
-versionTest( Flounder );
+constructorTest( FlounderReact, React, ReactDOM );
+flounderTest( FlounderReact, React, ReactDOM );
+utilsTest( FlounderReact, React, ReactDOM, utils );
+versionTest( FlounderReact, React, ReactDOM );
 
 export default tests;

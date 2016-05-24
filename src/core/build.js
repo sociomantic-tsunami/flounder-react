@@ -63,7 +63,8 @@ const build = {
      */
     bindThis : function()
     {
-            [ 'catchBodyClick',
+            [ 
+            'catchBodyClick',
             'checkClickTarget',
             'checkFlounderKeypress',
             'clearPlaceholder',
@@ -75,77 +76,38 @@ const build = {
             'removeMultiTag',
             'setKeypress',
             'setSelectValue',
-            'toggleList' ].forEach( func =>
+            'toggleList',
+            'toggleListSearchClick' ].forEach( func =>
             {
                 this[ func ] = this[ func ].bind( this );
                 this[ func ].___isBound = true;
             } );
     },
 
-
     /**
-     * ## buildDom
+     * ## buildArrow
      *
-     * builds flounder
+     * builds the arrow and the
      *
-     * @return _Void_
+     * @param {Object} props property object
+     * @param {Function} constructElement ref to this.constructElement
+     *
+     * @return {DOMElement} arrow
      */
-    buildDom : function()
+    buildArrow : function( props, constructElement )
     {
-        this.refs               = {};
-
-        let constructElement    = utils.constructElement;
-
-        let wrapperClass        = classes.MAIN_WRAPPER;
-        let wrapper             = utils.constructElement( { className : this.wrapperClass ?
-                                    wrapperClass + ' ' + this.wrapperClass : wrapperClass } );
-        let flounderClass       = classes.MAIN;
-        let flounder            = constructElement( { className : this.flounderClass ?
-                                    flounderClass + '  ' + this.flounderClass : flounderClass } );
-
-        flounder.setAttribute( 'aria-hidden', true );
-        flounder.tabIndex       = 0;
-        wrapper.appendChild( flounder );
-
-        let select              = this.initSelectBox( wrapper );
-        select.tabIndex         = -1;
-
-        if ( this.multiple === true )
+        if (  props.disableArrow )
         {
-            select.setAttribute( 'multiple', '' );
+            return null;
         }
-
-        let data                = this.data;
-        let defaultValue        = this._default = setDefaultOption( this, this.props, data );
-        let selected            = constructElement( { className : classes.SELECTED_DISPLAYED,
-                                        'data-value' : defaultValue.value, 'data-index' : defaultValue.index || -1 } );
-            selected.innerHTML  = defaultValue.text;
-
-        let multiTagWrapper     = this.multiple ? constructElement( { className : classes.MULTI_TAG_LIST } ) : null;
-
-        let arrow               = constructElement( { className : classes.ARROW } );
-        let optionsListWrapper  = constructElement( { className : classes.OPTIONS_WRAPPER + '  ' + classes.HIDDEN } );
-        let optionsList         = constructElement( { className : classes.LIST } );
-        optionsList.setAttribute( 'role', 'listbox' );
-        optionsListWrapper.appendChild( optionsList );
-
-        [ selected, multiTagWrapper, arrow, optionsListWrapper ].forEach( el =>
+        else
         {
-            if ( el )
-            {
-                flounder.appendChild( el );
-            }
-        } );
+            let arrow       = constructElement( { className : classes.ARROW } );
+            let arrowInner  = constructElement( { className : classes.ARROW_INNER } );
+            arrow.appendChild( arrowInner )
 
-        let search = this.addSearch( flounder );
-        let selectOptions;
-
-        [ data, selectOptions ] = this.buildData( defaultValue, data, optionsList, select );
-
-        this.target.appendChild( wrapper );
-
-        this.refs = { wrapper, flounder, selected, arrow, optionsListWrapper,
-                    search, multiTagWrapper, optionsList, select, data, selectOptions };
+            return arrow;
+        }
     },
 
 
@@ -173,7 +135,8 @@ const build = {
         let selectedClass           = this.selectedClass;
         let escapeHTML              = utils.escapeHTML;
         let addClass                = utils.addClass;
-        let selectRef               = this.refs.select;
+        let refs                    = this.refs;
+        let selectRef               = refs.select;
         let allowHTML               = this.allowHTML;
 
 
@@ -263,13 +226,19 @@ const build = {
                 let selectChild     = selectRef.children[ i ];
                 selectOption        = selectChild;
                 selectChild.setAttribute( 'value', selectChild.value );
-                addClass( selectChild, 'flounder--option--tag' );
+
+                if ( selectChild.disabled === true && data[ i ] )
+                {
+                    addClass( data[ i ], classes.DISABLED );
+                }
+                addClass( selectChild, classes.OPTION_TAG );
             }
 
             if ( i === defaultValue.index )
             {
                 selectOption.selected = true;
             }
+
 
             if ( selectOption.getAttribute( 'disabled' ) )
             {
@@ -303,8 +272,17 @@ const build = {
                 section.appendChild( header );
                 optionsList.appendChild( section );
 
-                dataObj.data.forEach( ( d ) =>
+                let dataObjData = dataObj.data;
+                dataObjData.forEach( ( d, i ) =>
                 {
+                    if ( typeof d !== 'object' )
+                    {
+                        d = dataObjData[ i ] = {
+                            text    : d,
+                            value   : d
+                        };
+                    }
+
                     data[ index ]           = buildDiv( d, index );
                     section.appendChild( data[ index ] );
                     selectOptions[ index ]  = buildOption( d, index );
@@ -320,7 +298,77 @@ const build = {
             }
         } );
 
+
         return  [ data, selectOptions ];
+    },
+
+
+    /**
+     * ## buildDom
+     *
+     * builds flounder
+     *
+     * @return _Void_
+     */
+    buildDom : function()
+    {
+        let props               = this.props;
+        this.refs               = {};
+
+        let constructElement    = utils.constructElement;
+
+        let wrapperClass        = classes.MAIN_WRAPPER;
+        let wrapper             = utils.constructElement( { className : this.wrapperClass ?
+                                    wrapperClass + ' ' + this.wrapperClass : wrapperClass } );
+        let flounderClass       = classes.MAIN;
+        let flounder            = constructElement( { className : this.flounderClass ?
+                                    flounderClass + '  ' + this.flounderClass : flounderClass } );
+
+        flounder.setAttribute( 'aria-hidden', true );
+        flounder.tabIndex       = 0;
+        wrapper.appendChild( flounder );
+
+        let select              = this.initSelectBox( wrapper );
+        select.tabIndex         = -1;
+
+        if ( this.multiple === true )
+        {
+            select.setAttribute( 'multiple', '' );
+        }
+
+        let data                = this.data;
+        let defaultValue        = this._default = setDefaultOption( this, this.props, data );
+        let selected            = constructElement( { className : classes.SELECTED_DISPLAYED,
+                                        'data-value' : defaultValue.value, 'data-index' : defaultValue.index || -1 } );
+            selected.innerHTML  = defaultValue.text;
+
+        let multiTagWrapper     = this.multiple ? constructElement( { className : classes.MULTI_TAG_LIST } ) : null;
+
+        let search              = this.addSearch( flounder );
+
+        let optionsListWrapper  = constructElement( { className : classes.OPTIONS_WRAPPER + '  ' + classes.HIDDEN } );
+        let optionsList         = constructElement( { className : classes.LIST } );
+        optionsList.setAttribute( 'role', 'listbox' );
+        optionsListWrapper.appendChild( optionsList );
+
+        let arrow               = this.buildArrow( props, constructElement );
+
+        [ selected, multiTagWrapper, optionsListWrapper, arrow ].forEach( el =>
+        {
+            if ( el )
+            {
+                flounder.appendChild( el );
+            }
+        } );
+
+        let selectOptions;
+
+        [ data, selectOptions ] = this.buildData( defaultValue, data, optionsList, select );
+
+        this.target.appendChild( wrapper );
+
+        this.refs = { wrapper, flounder, selected, arrow, optionsListWrapper,
+                    search, multiTagWrapper, optionsList, select, data, selectOptions };
     },
 
 
@@ -457,6 +505,7 @@ const build = {
         else if ( !props && typeof data === 'object' )
         {
             props       = data;
+            console.log( props );
             props.data  = props.data || this.data;
         }
         else

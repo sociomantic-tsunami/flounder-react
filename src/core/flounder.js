@@ -286,6 +286,12 @@ class Flounder
                     this.fuzzySearchReset();
                 }
             }
+            else if ( keyCode === 27 )
+            {
+                this.fuzzySearchReset();
+                this.toggleList( e, 'close' );
+                this.addPlaceholder();
+            }
             else
             {
                 this.setSelectValue( e );
@@ -362,9 +368,9 @@ class Flounder
             this.multiple       = true;
             this.selectedClass  += '  ' + classes.SELECTED_HIDDEN;
 
-            if ( !props.placeholder )
+            if ( !this.placeholder )
             {
-                props.placeholder = defaultOptions.placeholder;
+                this.placeholder = defaultOptions.placeholder;
             }
         }
     }

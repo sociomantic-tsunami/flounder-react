@@ -2,7 +2,7 @@
 
 import classes from '../../src/core/classes';
 
-let tests = function( Flounder )
+let tests = function( Flounder, React, ReactDOM )
 {
     QUnit.module( 'flounder.js' );
 
@@ -16,14 +16,15 @@ let tests = function( Flounder )
      */
     QUnit.test( 'arrayOfFlounders', function( assert )
     {
-        let flounder    = ( new Flounder( document.body ) );
+        let flounder    = ReactDOM.render( React.createElement( Flounder, {} ), document.querySelector( '.flounder-test__target' ) );
         assert.ok( flounder.arrayOfFlounders, 'exists' );
 
-        let flounders   = flounder.arrayOfFlounders( [ document.body ], flounder.props );
-        assert.ok( Array.isArray( flounders ), 'multiple targets returns an array' );
-        assert.ok( flounders[0] instanceof Flounder, 'of flounders' );
+        flounder.destroy();
+        // let flounders   = flounder.arrayOfFlounders( [ document.querySelector( '.flounder-test__target' ) ], flounder.props );
+        // assert.ok( Array.isArray( flounders ), 'multiple targets returns an array' );
+        // assert.ok( flounders[0] instanceof Flounder, 'of flounders' );
 
-        flounders.forEach( function( el ){ el.destroy() } );
+        // flounders.forEach( function( el ){ el.destroy() } );
     } );
 
 
@@ -35,7 +36,7 @@ let tests = function( Flounder )
      */
     QUnit.test( 'componentWillUnmount', function( assert )
     {
-        let flounder    = ( new Flounder( document.body ) );
+        let flounder    = ReactDOM.render( React.createElement( Flounder, {} ), document.querySelector( '.flounder-test__target' ) );
         assert.ok( flounder.componentWillUnmount, 'exists' );
 
         let refs        = flounder.refs;
@@ -66,8 +67,13 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body,
-                                { multiple : true, multipleTags : true, data : data } );
+        let flounder = ReactDOM.render( React.createElement( Flounder,
+                {
+                    multiple        : true,
+                    multipleTags    : true,
+                    data            : data
+                } ), document.querySelector( '.flounder-test__target' ) );
+
 
         assert.ok( flounder.displayMultipleTags, 'exists' );
 
@@ -104,7 +110,9 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0 } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0 } ),
+                document.querySelector( '.flounder-test__target' ) );
 
         assert.ok( flounder.displaySelected, 'exists' );
         flounder.setByIndex( 1 );
@@ -129,7 +137,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, search : true } );
+
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, search : true } ),
+                document.querySelector( '.flounder-test__target' ) );
 
         assert.ok( flounder.fuzzySearch, 'exists' );
 
@@ -162,7 +173,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, search : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, search : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
 
         assert.ok( flounder.fuzzySearchReset, 'exists' );
 
@@ -194,7 +208,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, search : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, search : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.initializeOptions, 'exists' );
 
         assert.ok( flounder.data[0].text === 'doge', 'correctly sets data' );
@@ -217,7 +234,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, search : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, search : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.onRender, 'exists' );
 
         flounder.destroy();
@@ -231,15 +251,23 @@ let tests = function( Flounder )
      */
     QUnit.test( 'removeMultiTag', function( assert )
     {
+        window.React = React;
+        window.ReactDOM = ReactDOM;
+        window.Flounder = Flounder;
+
         let data = [
             'doge',
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, multipleTags : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, multipleTags : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.removeMultiTag, 'exists' );
 
-        let refs = document.body.flounder.refs;
+        let refs = document.querySelector( '.flounder-test__target' ).flounder.refs;
+console.log( refs );
         let doge = refs.data[1];
         doge.click();
 
@@ -264,10 +292,13 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, multipleTags : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, multipleTags : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.removeSelectedClass, 'exists' );
 
-        let refs = document.body.flounder.refs;
+        let refs = document.querySelector( '.flounder-test__target' ).flounder.refs;
         refs.data[1].click();
         refs.data[2].click();
 
@@ -292,7 +323,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, multipleTags : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, multipleTags : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.removeSelectedValue, 'exists' );
 
         let refs = flounder.refs;
@@ -319,7 +353,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data, defaultIndex : 0, multipleTags : true } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, multipleTags : true } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.setTextMultiTagIndent, 'exists' );
 
         let refs = flounder.refs;
@@ -353,7 +390,10 @@ let tests = function( Flounder )
             'moon'
         ];
 
-        let flounder    = new Flounder( document.body, { data : data } );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data } ),
+                document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.sortData, 'exists' );
 
         let sortedData  = flounder.sortData( ['doge','moon'] );
@@ -374,7 +414,9 @@ let tests = function( Flounder )
      */
     QUnit.test( 'version', function( assert )
     {
-        let flounder    = new Flounder( document.body );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                {} ), document.querySelector( '.flounder-test__target' ) );
+
         assert.ok( flounder.version, 'exists' );
 
         assert.equal( Flounder.version, flounder.version, 'shows the version' );
@@ -387,6 +429,7 @@ let tests = function( Flounder )
 
         flounder.destroy();
     } );
+
 
     /*
      * ## blur Opened Dropdowns
@@ -408,10 +451,9 @@ let tests = function( Flounder )
             }
         ];
 
-        let container = document.createElement( 'div' );
-        document.body.appendChild( container );
-
-        let flounder    = ( new Flounder( container, { data : data } ) );
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0, multipleTags : true } ),
+                document.querySelector( '.flounder-test__target' ) );
 
         flounder.setByValue( 'item1' );
         flounder.refs.selected.click();

@@ -6,7 +6,7 @@
  * Released under the MIT license
  * https://github.com/sociomantic-tsunami/flounder-react/license
  *
- * Date: Wed May 18 2016
+ * Date: Tue May 24 2016
  * "This, so far, is the best React Flounder ever"
  */
 
@@ -124,7 +124,7 @@ class FlounderReact extends Component
      */
     prepOptions( data )
     {
-        data.forEach( ( dataObj, i ) =>
+        return data.map( ( dataObj, i ) =>
         {
             if ( typeof dataObj === 'string' )
             {
@@ -135,9 +135,9 @@ class FlounderReact extends Component
             }
 
             dataObj.text = this.allowHTML ? dataObj.text : utils.escapeHTML( dataObj.text );
-        } );
 
-        return data;
+            return dataObj;
+        } );
     }
 
 
@@ -176,7 +176,15 @@ class FlounderReact extends Component
         let data            = this.data = this.prepOptions( props.data || this.data );
 
         let handleChange    = this.handleChange.bind( this );
+
+        let multipleTags    = this.multipleTags;
         let multiple        = this.multiple;
+
+        if ( multipleTags === true )
+        {
+            multiple = this.multiple = true;
+        }
+
         let searchBool      = this.search;
 
         let defaultValue    = this._default = setDefaultOption( this, props, data );
@@ -190,12 +198,12 @@ class FlounderReact extends Component
 
         return (
             <div ref="wrapper" className={classes.MAIN_WRAPPER + wrapperClass}>
-                <div ref="flounder" tabIndex="0" className={classes.MAIN + flounderClass}>
+                <div ref="flounder" tabIndex="0" className={classes.MAIN + flounderClass} aria-hidden={true}>
+                    { searchBool ? <input ref="search" type="text" className={classes.SEARCH} /> : null }
                     <div ref="selected" className={classes.SELECTED_DISPLAYED} data-value={defaultValue.value}>
                         {defaultValue.text}
                     </div>
-                    { multiple ? <div ref="multiTagWrapper" className={classes.MULTI_TAG_LIST}  multiple></div> : null }
-                    <div ref="arrow" className={classes.ARROW}></div>
+                    { multipleTags ? <div ref="multiTagWrapper" className={classes.MULTI_TAG_LIST}></div> : null }
                     <div ref="optionsListWrapper" className={classes.OPTIONS_WRAPPER + '  ' + classes.HIDDEN}>
                         <div ref="optionsList" className={classes.LIST}>
                         {
@@ -223,7 +231,9 @@ class FlounderReact extends Component
                         }
                         </div>
                     </div>
-                    { searchBool ? <input ref="search" type="text" className={classes.SEARCH} /> : null }
+                    <div className={classes.ARROW}>
+                        <div className={classes.ARROW_INNER}></div>
+                    </div>
                 </div>
                 <select ref="select" className={classes.SELECT_TAG + '  ' + classes.HIDDEN} defaultValue={defaultReact} tabIndex="-1" multiple={multiple}>
                 {

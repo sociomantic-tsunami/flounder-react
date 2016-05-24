@@ -1,5 +1,5 @@
 /* global document, QUnit  */
-let tests = function( Flounder )
+let tests = function( Flounder, React, ReactDOM )
 {
     QUnit.module( 'Flounder constructor' );
 
@@ -13,21 +13,10 @@ let tests = function( Flounder )
     QUnit.test( 'Flounder', function( assert )
     {
         assert.ok( Flounder, 'Flounder Exists' );
-        let flounder = new Flounder;
 
-        // assert.deepEqual( Flounder, flounder, 'empty returns a new constructor' );
+        let flounder = ReactDOM.render( React.createElement( Flounder, {} ), document.querySelector( '.flounder-test__target' ) );
 
-        let flounders = new Flounder( [ document.body ] );
-        assert.ok( Array.isArray( flounders ), 'multiple targets returns an array' );
-        assert.ok( flounders[0] instanceof Flounder, 'of flounders' );
-        flounders[0].destroy();
-
-        flounder = new Flounder( document.body );
         assert.ok( flounder instanceof Flounder, 'a single target makes a flounder' );
-        flounder.destroy();
-
-
-        flounder = new Flounder( document.body );
 
         let ref     = flounder.refs.flounder.flounder instanceof Flounder;
         let oTarget = flounder.originalTarget.flounder instanceof Flounder;

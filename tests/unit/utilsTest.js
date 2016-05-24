@@ -1,6 +1,6 @@
 /* global document, QUnit  */
 
-let tests = function( Flounder, utils )
+let tests = function( Flounder, React, ReactDOM, utils )
 {
     QUnit.module( 'utils.js' );
 

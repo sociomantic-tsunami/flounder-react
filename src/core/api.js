@@ -96,10 +96,10 @@ const api = {
         let originalTarget      = this.originalTarget;
         let tagName             =  originalTarget.tagName;
 
-        refs.flounder.flounder  = originalTarget.flounder = this.target.flounder = null;
-
         if ( tagName === 'INPUT' || tagName === 'SELECT' )
         {
+            let target = originalTarget.nextElementSibling;
+
             if ( tagName === 'SELECT' )
             {
                 let firstOption = originalTarget[0];
@@ -108,9 +108,9 @@ const api = {
                 {
                     originalTarget.removeChild( firstOption );
                 }
+            } else if ( tagName === 'INPUT' ) {
+                target = refs.flounder.parentNode;
             }
-
-            let target = originalTarget.nextElementSibling;
 
             try
             {
@@ -136,6 +136,9 @@ const api = {
                 throw ' : this flounder may have already been removed';
             }
         }
+
+        refs.flounder.flounder  = originalTarget.flounder = this.target.flounder = null;
+
     },
 
 
@@ -481,13 +484,14 @@ const api = {
      */
     rebuild : function( data, props )
     {
-        if ( props || !props && ( typeof data === 'string' || typeof data.length !== 'number' ) )
+        if ( props || !props && ( typeof data === 'string' ||
+            ( data && typeof data.length !== 'number' ) ) )
         {
-            this.reconfigureFlounder( data, props );
+            return this.reconfigure( data, props );
         }
 
-        props           = this.props;
         data            = this.data = data || this.data;
+        props           = this.props;
         let refs        = this.refs;
         let _select     = refs.select;
 
@@ -531,7 +535,7 @@ const api = {
         }
         else
         {
-            let data    = refs.data;
+            let data    = this.data;
             let length  = data.length;
 
             if ( index < 0 )
@@ -616,9 +620,9 @@ const api = {
             let values = this.refs.selectOptions.map( function( el )
             {
                 return el.value === value + '' ? el.index : null;
-            } ).filter( a => !!a );
+            } ).filter( a => a === 0 || !!a );
 
-            return value ? this.setByIndex( values, multiple, programmatic ) : null;
+            return values.length !== 0 ? this.setByIndex( values, multiple, programmatic ) : null;
         }
     }
 };
