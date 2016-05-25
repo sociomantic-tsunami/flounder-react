@@ -29,6 +29,47 @@ let tests = function( Flounder, React, ReactDOM )
 
 
     /*
+     * ## blur Opened Dropdowns
+     *
+     * @test exists
+     * @test multiple targets returns an array
+     * @test of flounders
+     */
+    QUnit.test( 'blurOpenedDropdown', function( assert )
+    {
+                window.React = React;
+        window.ReactDOM = ReactDOM;
+        window.Flounder = Flounder;
+
+
+        let data = [
+            {
+                text : "Item 1",
+                value : "item1"
+            },
+            {
+                text : "Item 2",
+                value : "item2"
+            }
+        ];
+
+        let flounder    = ReactDOM.render( React.createElement( Flounder,
+                { data : data, defaultIndex : 0 } ),
+                document.querySelector( '.flounder-test__target' ) );
+
+        flounder.setByValue( 'item1' );
+        flounder.refs.selected.click();
+
+        document.body.click();
+
+        assert.equal( flounder.refs.selected.innerHTML, 'Item 1',
+                                        'text stays after focusout' );
+
+        flounder.destroy();
+    } );
+
+
+    /*
      * ## componentWillUnmount tests
      *
      * @test exists
@@ -251,23 +292,19 @@ let tests = function( Flounder, React, ReactDOM )
      */
     QUnit.test( 'removeMultiTag', function( assert )
     {
-        window.React = React;
-        window.ReactDOM = ReactDOM;
-        window.Flounder = Flounder;
-
         let data = [
             'doge',
             'moon'
         ];
 
         let flounder    = ReactDOM.render( React.createElement( Flounder,
-                { data : data, defaultIndex : 0, multipleTags : true } ),
+                { data : data, placeholder : 'placeholders!', multipleTags : true } ),
                 document.querySelector( '.flounder-test__target' ) );
 
         assert.ok( flounder.removeMultiTag, 'exists' );
 
         let refs = document.querySelector( '.flounder-test__target' ).flounder.refs;
-console.log( refs );
+
         let doge = refs.data[1];
         doge.click();
 
@@ -293,12 +330,13 @@ console.log( refs );
         ];
 
         let flounder    = ReactDOM.render( React.createElement( Flounder,
-                { data : data, defaultIndex : 0, multipleTags : true } ),
+                { data : data, placeholder:'moon!', multipleTags : true } ),
                 document.querySelector( '.flounder-test__target' ) );
 
         assert.ok( flounder.removeSelectedClass, 'exists' );
 
-        let refs = document.querySelector( '.flounder-test__target' ).flounder.refs;
+        let refs = flounder.refs;
+
         refs.data[1].click();
         refs.data[2].click();
 
@@ -330,8 +368,8 @@ console.log( refs );
         assert.ok( flounder.removeSelectedValue, 'exists' );
 
         let refs = flounder.refs;
+        refs.data[0].click();
         refs.data[1].click();
-        refs.data[2].click();
 
         flounder.removeSelectedValue();
 
@@ -354,7 +392,7 @@ console.log( refs );
         ];
 
         let flounder    = ReactDOM.render( React.createElement( Flounder,
-                { data : data, defaultIndex : 0, multipleTags : true } ),
+                { data : data, defaultIndex : 0, placeholder : 'placeholders!', multipleTags : true } ),
                 document.querySelector( '.flounder-test__target' ) );
 
         assert.ok( flounder.setTextMultiTagIndent, 'exists' );
@@ -426,42 +464,6 @@ console.log( refs );
         // assert.equal( Flounder.version, flounder.version, 'instance version is read only' );
         // Flounder.version = 'moin!';
         // assert.equal( Flounder.version, flounder.version, 'constructor version is read only' );
-
-        flounder.destroy();
-    } );
-
-
-    /*
-     * ## blur Opened Dropdowns
-     *
-     * @test exists
-     * @test multiple targets returns an array
-     * @test of flounders
-     */
-    QUnit.test( 'blurOpenedDropdown', function( assert )
-    {
-        let data = [
-            {
-                text : "Item 1",
-                value : "item1"
-            },
-            {
-                text : "Item 2",
-                value : "item2"
-            }
-        ];
-
-        let flounder    = ReactDOM.render( React.createElement( Flounder,
-                { data : data, defaultIndex : 0, multipleTags : true } ),
-                document.querySelector( '.flounder-test__target' ) );
-
-        flounder.setByValue( 'item1' );
-        flounder.refs.selected.click();
-
-        document.body.click();
-
-        assert.equal( flounder.refs.selected.innerHTML, 'Item 1', 'text is' +
-            ' stayed after focusout' );
 
         flounder.destroy();
     } );

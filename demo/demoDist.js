@@ -23611,9 +23611,9 @@ var _coreSearch = require('./core/search');
 
 var _coreSearch2 = _interopRequireDefault(_coreSearch);
 
-var _coreVersion = require('./core/version');
+var _version = require('./version');
 
-var _coreVersion2 = _interopRequireDefault(_coreVersion);
+var _version2 = _interopRequireDefault(_version);
 
 var _coreDefaults = require('./core/defaults');
 
@@ -23811,9 +23811,12 @@ var FlounderReact = (function (_Component) {
                             'div',
                             { ref: 'optionsList', className: _coreClasses2['default'].LIST },
                             data.map(function (dataObj, i) {
-                                var extraClass = i === defaultValue.index ? '  ' + _coreClasses2['default'].SELECTED : '';
-                                extraClass += dataObj.disabled ? '  ' + _coreClasses2['default'].DISABLED : '';
+                                var extraClass = dataObj.disabled ? '  ' + _coreClasses2['default'].DISABLED : '';
                                 extraClass += dataObj.extraClass ? '  ' + dataObj.extraClass : '';
+
+                                if (!_this2.placeholder && i === defaultValue.index) {
+                                    extraClass += '  ' + _coreClasses2['default'].SELECTED;
+                                }
 
                                 if (typeof dataObj === 'string') {
                                     dataObj = [dataObj, dataObj];
@@ -23875,17 +23878,22 @@ methods.forEach(function (method) {
 
 Object.defineProperty(FlounderReact, 'version', {
     get: function get() {
-        return _coreVersion2['default'];
+        return _version2['default'];
     }
 });
 
 Object.defineProperty(FlounderReact.prototype, 'version', {
     get: function get() {
-        return _coreVersion2['default'];
+        return _version2['default'];
     }
 });
-
+console.log(_version2['default']);
 exports['default'] = { React: _react2['default'], Component: _react.Component, ReactDOM: _reactDom2['default'], FlounderReact: FlounderReact, Flounder: _coreFlounder2['default'] };
 module.exports = exports['default'];
 
-},{"./core/classes":174,"./core/defaults":175,"./core/flounder":177,"./core/search":178,"./core/utils":179,"./core/version":180,"react":171,"react-dom":42}]},{},[1]);
+},{"./core/classes":174,"./core/defaults":175,"./core/flounder":177,"./core/search":178,"./core/utils":179,"./version":182,"react":171,"react-dom":42}],182:[function(require,module,exports){
+'use strict';
+
+module.exports = '0.0.5';
+
+},{}]},{},[1]);

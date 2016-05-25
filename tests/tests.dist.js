@@ -20103,7 +20103,7 @@ module.exports = require('./lib/React');
 },{"./lib/React":64}],170:[function(require,module,exports){
 module.exports={
   "name": "flounder-react",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -23533,9 +23533,9 @@ var _coreSearch = require('./core/search');
 
 var _coreSearch2 = _interopRequireDefault(_coreSearch);
 
-var _coreVersion = require('./core/version');
+var _version = require('./version');
 
-var _coreVersion2 = _interopRequireDefault(_coreVersion);
+var _version2 = _interopRequireDefault(_version);
 
 var _coreDefaults = require('./core/defaults');
 
@@ -23733,9 +23733,12 @@ var FlounderReact = (function (_Component) {
                             'div',
                             { ref: 'optionsList', className: _coreClasses2['default'].LIST },
                             data.map(function (dataObj, i) {
-                                var extraClass = i === defaultValue.index ? '  ' + _coreClasses2['default'].SELECTED : '';
-                                extraClass += dataObj.disabled ? '  ' + _coreClasses2['default'].DISABLED : '';
+                                var extraClass = dataObj.disabled ? '  ' + _coreClasses2['default'].DISABLED : '';
                                 extraClass += dataObj.extraClass ? '  ' + dataObj.extraClass : '';
+
+                                if (!_this2.placeholder && i === defaultValue.index) {
+                                    extraClass += '  ' + _coreClasses2['default'].SELECTED;
+                                }
 
                                 if (typeof dataObj === 'string') {
                                     dataObj = [dataObj, dataObj];
@@ -23797,23 +23800,23 @@ methods.forEach(function (method) {
 
 Object.defineProperty(FlounderReact, 'version', {
     get: function get() {
-        return _coreVersion2['default'];
+        return _version2['default'];
     }
 });
 
 Object.defineProperty(FlounderReact.prototype, 'version', {
     get: function get() {
-        return _coreVersion2['default'];
+        return _version2['default'];
     }
 });
-
+console.log(_version2['default']);
 exports['default'] = { React: _react2['default'], Component: _react.Component, ReactDOM: _reactDom2['default'], FlounderReact: FlounderReact, Flounder: _coreFlounder2['default'] };
 module.exports = exports['default'];
 
-},{"./core/classes":173,"./core/defaults":174,"./core/flounder":176,"./core/search":177,"./core/utils":178,"./core/version":179,"react":169,"react-dom":40}],181:[function(require,module,exports){
+},{"./core/classes":173,"./core/defaults":174,"./core/flounder":176,"./core/search":177,"./core/utils":178,"./version":181,"react":169,"react-dom":40}],181:[function(require,module,exports){
 'use strict';
 
-module.exports = '0.0.4';
+module.exports = '0.0.5';
 
 },{}],182:[function(require,module,exports){
 
@@ -23950,6 +23953,38 @@ var tests = function tests(Flounder, React, ReactDOM) {
         // assert.ok( flounders[0] instanceof Flounder, 'of flounders' );
 
         // flounders.forEach( function( el ){ el.destroy() } );
+    });
+
+    /*
+     * ## blur Opened Dropdowns
+     *
+     * @test exists
+     * @test multiple targets returns an array
+     * @test of flounders
+     */
+    QUnit.test('blurOpenedDropdown', function (assert) {
+        window.React = React;
+        window.ReactDOM = ReactDOM;
+        window.Flounder = Flounder;
+
+        var data = [{
+            text: "Item 1",
+            value: "item1"
+        }, {
+            text: "Item 2",
+            value: "item2"
+        }];
+
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0 }), document.querySelector('.flounder-test__target'));
+
+        flounder.setByValue('item1');
+        flounder.refs.selected.click();
+
+        document.body.click();
+
+        assert.equal(flounder.refs.selected.innerHTML, 'Item 1', 'text stays after focusout');
+
+        flounder.destroy();
     });
 
     /*
@@ -24128,18 +24163,14 @@ var tests = function tests(Flounder, React, ReactDOM) {
      * @test exists
      */
     QUnit.test('removeMultiTag', function (assert) {
-        window.React = React;
-        window.ReactDOM = ReactDOM;
-        window.Flounder = Flounder;
-
         var data = ['doge', 'moon'];
 
-        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, placeholder: 'placeholders!', multipleTags: true }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.removeMultiTag, 'exists');
 
         var refs = document.querySelector('.flounder-test__target').flounder.refs;
-        console.log(refs);
+
         var doge = refs.data[1];
         doge.click();
 
@@ -24159,11 +24190,12 @@ var tests = function tests(Flounder, React, ReactDOM) {
     QUnit.test('removeSelectedClass', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, placeholder: 'moon!', multipleTags: true }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.removeSelectedClass, 'exists');
 
-        var refs = document.querySelector('.flounder-test__target').flounder.refs;
+        var refs = flounder.refs;
+
         refs.data[1].click();
         refs.data[2].click();
 
@@ -24188,8 +24220,8 @@ var tests = function tests(Flounder, React, ReactDOM) {
         assert.ok(flounder.removeSelectedValue, 'exists');
 
         var refs = flounder.refs;
+        refs.data[0].click();
         refs.data[1].click();
-        refs.data[2].click();
 
         flounder.removeSelectedValue();
 
@@ -24206,7 +24238,7 @@ var tests = function tests(Flounder, React, ReactDOM) {
     QUnit.test('setTextMultiTagIndent', function (assert) {
         var data = ['doge', 'moon'];
 
-        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
+        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, placeholder: 'placeholders!', multipleTags: true }), document.querySelector('.flounder-test__target'));
 
         assert.ok(flounder.setTextMultiTagIndent, 'exists');
 
@@ -24267,34 +24299,6 @@ var tests = function tests(Flounder, React, ReactDOM) {
         // assert.equal( Flounder.version, flounder.version, 'instance version is read only' );
         // Flounder.version = 'moin!';
         // assert.equal( Flounder.version, flounder.version, 'constructor version is read only' );
-
-        flounder.destroy();
-    });
-
-    /*
-     * ## blur Opened Dropdowns
-     *
-     * @test exists
-     * @test multiple targets returns an array
-     * @test of flounders
-     */
-    QUnit.test('blurOpenedDropdown', function (assert) {
-        var data = [{
-            text: "Item 1",
-            value: "item1"
-        }, {
-            text: "Item 2",
-            value: "item2"
-        }];
-
-        var flounder = ReactDOM.render(React.createElement(Flounder, { data: data, defaultIndex: 0, multipleTags: true }), document.querySelector('.flounder-test__target'));
-
-        flounder.setByValue('item1');
-        flounder.refs.selected.click();
-
-        document.body.click();
-
-        assert.equal(flounder.refs.selected.innerHTML, 'Item 1', 'text is' + ' stayed after focusout');
 
         flounder.destroy();
     });

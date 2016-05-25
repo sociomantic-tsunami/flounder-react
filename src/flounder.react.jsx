@@ -8,7 +8,7 @@ import Flounder             from './core/flounder';
 import classes              from './core/classes';
 import utils                from './core/utils';
 import Search               from './core/search';
-import version              from './core/version';
+import version              from './version';
 import { setDefaultOption } from './core/defaults';
 
 const slice = Array.prototype.slice;
@@ -198,9 +198,13 @@ class FlounderReact extends Component
                         {
                             data.map( ( dataObj, i ) =>
                             {
-                                let extraClass = i === defaultValue.index ? '  ' + classes.SELECTED : '';
-                                extraClass += dataObj.disabled ? '  ' + classes.DISABLED : '';
+                                let extraClass = dataObj.disabled ? '  ' + classes.DISABLED : '';
                                 extraClass += dataObj.extraClass ? '  ' + dataObj.extraClass : '';
+
+                                if ( !this.placeholder && i === defaultValue.index )
+                                {
+                                    extraClass += '  ' + classes.SELECTED;
+                                }
 
                                 if ( typeof dataObj === 'string' )
                                 {
@@ -259,6 +263,7 @@ methods.forEach( function( method )
     }
 });
 
+
 Object.defineProperty( FlounderReact, 'version', {
     get : function()
     {
@@ -266,12 +271,13 @@ Object.defineProperty( FlounderReact, 'version', {
     }
 } );
 
+
 Object.defineProperty( FlounderReact.prototype, 'version', {
     get : function()
     {
         return version;
     }
 } );
-
+console.log( version );
 export default { React, Component, ReactDOM, FlounderReact, Flounder };
 
