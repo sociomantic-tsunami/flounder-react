@@ -1773,6 +1773,9 @@ var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -20103,7 +20106,7 @@ module.exports = require('./lib/React');
 },{"./lib/React":64}],170:[function(require,module,exports){
 module.exports={
   "name": "flounder-react",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -20121,6 +20124,7 @@ module.exports={
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "connect": "^3.4.0",
+    "flounder": "^0.7.8",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-uglify": "^1.5.1",
@@ -23816,7 +23820,7 @@ module.exports = exports['default'];
 },{"./core/classes":173,"./core/defaults":174,"./core/flounder":176,"./core/search":177,"./core/utils":178,"./version":181,"react":169,"react-dom":40}],181:[function(require,module,exports){
 'use strict';
 
-module.exports = '0.0.5';
+module.exports = '0.0.7';
 
 },{}],182:[function(require,module,exports){
 

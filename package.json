@@ -1,6 +1,6 @@
 {
   "name": "flounder-react",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -18,6 +18,7 @@
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "connect": "^3.4.0",
+    "flounder": "^0.7.8",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-uglify": "^1.5.1",

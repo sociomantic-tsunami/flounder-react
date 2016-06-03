@@ -1910,6 +1910,9 @@ var currentQueue;
 var queueIndex = -1;
 
 function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
     draining = false;
     if (currentQueue.length) {
         queue = currentQueue.concat(queue);
@@ -23894,6 +23897,6 @@ module.exports = exports['default'];
 },{"./core/classes":174,"./core/defaults":175,"./core/flounder":177,"./core/search":178,"./core/utils":179,"./version":182,"react":171,"react-dom":42}],182:[function(require,module,exports){
 'use strict';
 
-module.exports = '0.0.5';
+module.exports = '0.0.7';
 
 },{}]},{},[1]);

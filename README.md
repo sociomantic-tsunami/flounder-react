@@ -1,4 +1,4 @@
-Flounder.React.js 0.0.6
+Flounder.React.js 0.0.7
 =================
 
 [![Flounder.react build status](https://travis-ci.org/sociomantic-tsunami/flounder-react.svg)](https://travis-ci.org)
@@ -14,7 +14,7 @@ require('flounder-react');
 // es6
 import Flounder from 'flounder-react';
 ```
-
+ 
 
 Usage
 =====
@@ -36,34 +36,6 @@ Flounder also adds a reference of itself to its target element.  So if you lose 
 document.querySelector( '#flounder--wrapper--thing' ).flounder.destroy()
 ```
 
-
-###Target options
-
-Flounder's target is quite flexible.
-
-you can give it an element:
-
-```js
-new Flounder( document.getElementsByTagName( 'input--el' )[0], options );
-```
-
-an array:
-
-```js
-new Flounder( [ el1, el2, el3 ], options );
-```
-
-an HTML collection:
-
-```js
-new Flounder( document.getElementsByTagName( 'input' ), options );
-```
-
-or, just a selector string:
-
-```js
-new Flounder( 'input', options );
-```
 
 If flounder is fed an element that already has a flounder, it will destroy it and re initialize it with the new options.
 
