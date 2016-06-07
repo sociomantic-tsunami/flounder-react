@@ -1,6 +1,6 @@
 {
   "name": "flounder-react",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -38,6 +38,7 @@
   "files": [
     "CODE_OF_CONDUCT.md",
     "README.md",
+    "dist/",
     "src/"
   ],
   "homepage": "https://github.com/sociomantic-tsunami/flounder-react",
