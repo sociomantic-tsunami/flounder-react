@@ -38,8 +38,7 @@
   "files": [
     "CODE_OF_CONDUCT.md",
     "README.md",
-    "dist/",
-    "src/"
+    "dist/"
   ],
   "homepage": "https://github.com/sociomantic-tsunami/flounder-react",
   "main": "./src/flounder.react.jsx",
