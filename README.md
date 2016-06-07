@@ -1,4 +1,4 @@
-Flounder.React.js 0.0.10
+Flounder.React.js 0.0.11
 =================
 
 [![Flounder.react build status](https://travis-ci.org/sociomantic-tsunami/flounder-react.svg)](https://travis-ci.org)
