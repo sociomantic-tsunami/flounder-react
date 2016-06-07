@@ -19,5 +19,6 @@ npm-debug.log
 
 src/core
 
+dist/**
 demo/demoDist.js
 tests/tests.dist.js
