@@ -1,5 +1,5 @@
 /*!
- * Flounder React JavaScript Stylable Selectbox v0.0.9
+ * Flounder React JavaScript Stylable Selectbox v0.0.10
  * https://github.com/sociomantic-tsunami/flounder-react
  *
  * Copyright 2015-2016 Sociomantic Labs and other contributors
