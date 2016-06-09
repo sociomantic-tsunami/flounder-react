@@ -279,5 +279,5 @@ Object.defineProperty( FlounderReact.prototype, 'version', {
     }
 } );
 console.log( version );
-export default { React, Component, ReactDOM, FlounderReact, Flounder };
 
+export default  FlounderReact;
