@@ -6,7 +6,7 @@
  * Released under the MIT license
  * https://github.com/sociomantic-tsunami/flounder-react/license
  *
- * Date: Tue Jun 07 2016
+ * Date: Fri Jun 10 2016
  * "This, so far, is the best React Flounder ever"
  */
 
