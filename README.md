@@ -1,4 +1,4 @@
-Flounder.React.js 0.0.12
+Flounder.React.js 0.1.0
 =================
 
 [![Flounder.react build status](https://travis-ci.org/sociomantic-tsunami/flounder-react.svg)](https://travis-ci.org)
@@ -382,13 +382,14 @@ When you release a new verion, commit it to dev (keeps dev upto date), commit it
 Change Log
 ==========
 
-+ 0.0.12
++ 0.1.0
 -------
 
 + use strict removed
 + slice switched for spread
 + only flounder is exported by default
 + flounder version bumped to 0.8.1
++ test, demo, and npm scripts changed to reflect flounder changes
 
 
 + 0.0.9
