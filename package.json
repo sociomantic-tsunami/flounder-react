@@ -18,7 +18,7 @@
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "connect": "^3.4.0",
-    "flounder": "^0.8.0",
+    "flounder": "^0.8.1",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-uglify": "^1.5.1",

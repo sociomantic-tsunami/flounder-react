@@ -388,6 +388,7 @@ Change Log
 + use strict removed
 + slice switched for spread
 + only flounder is exported by default
++ flounder version bumped to 0.8.1
 
 
 + 0.0.9
