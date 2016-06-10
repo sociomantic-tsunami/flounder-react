@@ -1,7 +1,4 @@
 
-/* jshint globalstrict: true */
-'use strict';
-
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
 import Flounder             from './core/flounder';
@@ -10,8 +7,6 @@ import utils                from './core/utils';
 import Search               from './core/search';
 import version              from './version';
 import { setDefaultOption } from './core/defaults';
-
-const slice = Array.prototype.slice;
 
 class FlounderReact extends Component
 {
@@ -41,8 +36,8 @@ class FlounderReact extends Component
 
         this.target         = this.originalTarget = refs.wrapper.parentNode;
 
-        refs.data           = slice.call( refs.optionsList.children, 0 );
-        refs.selectOptions  = slice.call( refs.select.children, 0 );
+        refs.data           = [ ...refs.optionsList.children ];
+        refs.selectOptions  = [ ...refs.select.children ];
 
         refs.flounder.flounder = this.originalTarget.flounder = this.target.flounder = this;
 
@@ -278,6 +273,6 @@ Object.defineProperty( FlounderReact.prototype, 'version', {
         return version;
     }
 } );
-console.log( version );
-export default { React, Component, ReactDOM, FlounderReact, Flounder };
+
+export default FlounderReact;
 

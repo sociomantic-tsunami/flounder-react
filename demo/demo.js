@@ -1,10 +1,10 @@
 
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
-import FlounderBundle       from '../src/flounder.react.jsx';
+import FlounderReact        from '../src/flounder.react.jsx';
 import µ                    from 'microbejs';
 
-window.FlounderReact = FlounderBundle.FlounderReact;
+window.FlounderReact = FlounderReact;
 
 let _slice = Array.prototype.slice;
 /**
@@ -126,4 +126,4 @@ ReactDOM.render( React.createElement( FlounderReact, {
 } );
 
 
-export default FlounderBundle;
+export default FlounderReact;

@@ -1,6 +1,6 @@
 {
   "name": "flounder-react",
-  "version": "0.0.11",
+  "version": "0.1.0",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -8,9 +8,10 @@
     "url": "git+https://github.com/sociomantic-tsunami/flounder-react.git"
   },
   "scripts": {
+    "bash": "mkdir -p dist && cp -R ./node_modules/flounder/src/core ./src/core && cp ./node_modules/flounder/dist/flounder-structure.css ./dist/flounder-structure.css",
     "buildTests": "mkdir -p dist  &&./node_modules/.bin/gulp buildTests",
-    "build": "./node_modules/.bin/gulp && npm test && echo \"All builds complete and tests passed.\"",
-    "gulp": "mkdir -p dist && cp -R ./node_modules/flounder/src/core ./src/core && ./node_modules/.bin/gulp",
+    "build": "npm run gulp && npm test && echo \"All builds complete and tests passed.\"",
+    "gulp": "npm run bash && ./node_modules/.bin/gulp",
     "test": "node --harmony ./scripts/nightmare.js",
     "versionBump": "node ./scripts/version_bump.js"
   },
@@ -18,7 +19,7 @@
     "babelify": "^6.3.0",
     "browserify": "^11.2.0",
     "connect": "^3.4.0",
-    "flounder": "^0.7.8",
+    "flounder": "^0.8.1",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-uglify": "^1.5.1",
