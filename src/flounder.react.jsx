@@ -1,7 +1,4 @@
 
-/* jshint globalstrict: true */
-'use strict';
-
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
 import Flounder             from './core/flounder';
