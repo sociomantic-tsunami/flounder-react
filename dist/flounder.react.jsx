@@ -1,12 +1,12 @@
 /*!
- * Flounder React JavaScript Stylable Selectbox v0.1.0
+ * Flounder React JavaScript Stylable Selectbox v0.1.2
  * https://github.com/sociomantic-tsunami/flounder-react
  *
  * Copyright 2015-2016 Sociomantic Labs and other contributors
  * Released under the MIT license
  * https://github.com/sociomantic-tsunami/flounder-react/license
  *
- * Date: Fri Jun 10 2016
+ * Date: Thu Jun 16 2016
  * "This, so far, is the best React Flounder ever"
  */
 
@@ -47,8 +47,8 @@ class FlounderReact extends Component
 
         this.target         = this.originalTarget = refs.wrapper.parentNode;
 
-        refs.data           = [ ...refs.optionsList.children ];
-        refs.selectOptions  = [ ...refs.select.children ];
+        refs.data           = Array.prototype.slice.call( refs.optionsList.children, 0 );
+        refs.selectOptions  = Array.prototype.slice.call( refs.select.children, 0 );
 
         refs.flounder.flounder = this.originalTarget.flounder = this.target.flounder = this;
 
