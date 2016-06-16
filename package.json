@@ -1,6 +1,6 @@
 {
   "name": "flounder-react",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": "Mouse Braun <mouse@knoblau.ch>",
   "description": "a native friendly dropdown menu",
   "repository": {
@@ -8,9 +8,9 @@
     "url": "git+https://github.com/sociomantic-tsunami/flounder-react.git"
   },
   "scripts": {
-    "bash": "mkdir -p dist && cp -R ./node_modules/flounder/src/core ./src/core && cp ./node_modules/flounder/dist/flounder-structure.css ./dist/flounder-structure.css",
-    "buildTests": "mkdir -p dist  &&./node_modules/.bin/gulp buildTests",
-    "build": "npm run gulp && npm test && echo \"All builds complete and tests passed.\"",
+    "bash": "mkdir -p ./src/core && cp ./node_modules/flounder/src/core/* ./src/core && cp ./node_modules/flounder/dist/flounder-structure.css ./src/flounder-structure.css",
+    "buildTests": "./node_modules/.bin/gulp buildTests",
+    "build": "npm run gulp && echo \"All builds complete and tests passed.\"",
     "gulp": "npm run bash && ./node_modules/.bin/gulp",
     "test": "node --harmony ./scripts/nightmare.js",
     "versionBump": "node ./scripts/version_bump.js"
