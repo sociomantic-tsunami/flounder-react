@@ -1,4 +1,4 @@
-Flounder.React.js 0.1.1
+Flounder.React.js 0.1.2
 =================
 
 [![Flounder.react build status](https://travis-ci.org/sociomantic-tsunami/flounder-react.svg)](https://travis-ci.org)
@@ -381,6 +381,12 @@ When you release a new verion, commit it to dev (keeps dev upto date), commit it
 
 Change Log
 ==========
+
++ 0.1.2
+-------
+
++ spread switched back to slice due to ie incompatabillity 
+
 
 + 0.1.0
 -------

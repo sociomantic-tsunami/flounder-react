@@ -36,8 +36,8 @@ class FlounderReact extends Component
 
         this.target         = this.originalTarget = refs.wrapper.parentNode;
 
-        refs.data           = [ ...refs.optionsList.children ];
-        refs.selectOptions  = [ ...refs.select.children ];
+        refs.data           = Array.prototype.slice.call( refs.optionsList.children, 0 );
+        refs.selectOptions  = Array.prototype.slice.call( refs.select.children, 0 );
 
         refs.flounder.flounder = this.originalTarget.flounder = this.target.flounder = this;
 
