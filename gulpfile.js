@@ -34,7 +34,7 @@ gulp.task( 'addLiscence', function()
 gulp.task( 'buildTests', function()
 {
     browserify( './tests/tests.js' )
-        .transform( babelify, { stage : 0 } )
+        .transform( babelify )
         .bundle()
         .pipe( fs.createWriteStream( __dirname + '/tests/tests.dist.js' ) )
 } );
@@ -43,7 +43,7 @@ gulp.task( 'buildTests', function()
 gulp.task( 'demo', function()
 {
     browserify( './demo/demo.js' )
-        .transform( babelify, { stage : 0 } )
+        .transform( babelify )
         .bundle()
         .pipe( fs.createWriteStream( __dirname + '/demo/demoDist.js' ) );
 } );

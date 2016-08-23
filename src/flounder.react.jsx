@@ -1,12 +1,12 @@
 
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
-import Flounder             from './core/flounder';
-import classes              from './core/classes';
-import utils                from './core/utils';
-import Search               from './core/search';
-import version              from './version';
-import { setDefaultOption } from './core/defaults';
+import Flounder             from '/core/flounder';
+import classes              from '/core/classes';
+import utils                from '/core/utils';
+import Search               from '/core/search';
+import version              from '/version';
+import { setDefaultOption } from '/core/defaults';
 
 class FlounderReact extends Component
 {

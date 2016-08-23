@@ -1,0 +1,38 @@
+{
+    "name": "flounder-react",
+    "version": "1.0.0",
+    "authors": [
+        "Mouse Braun <mouse@knoblau.ch>",
+    ],
+    "description": "a native friendly dropdown menu",
+    "main": "./dist/flounder.react.jsx",
+    "keywords": [
+        "select2",
+        "dropdown",
+        "plugin",
+        "react",
+        "component",
+        "ui",
+        "frontend",
+        "select",
+        "box",
+        "flounder",
+        "sociomantic"
+    ],
+    "homepage":"https://github.com/sociomantic-tsunami/flounder-react",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/sociomantic-tsunami/flounder-react.git"
+    },
+    "license": "MIT",
+    "moduleType":"node",
+    "ignore": [
+        "demo/",
+        "node_modules",
+        "bower_components",
+        "package.json",
+        "scripts/",
+        "tests/",
+        ".*"
+    ]
+}
