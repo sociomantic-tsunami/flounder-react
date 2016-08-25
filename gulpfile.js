@@ -1,26 +1,26 @@
 var gulp            = require( 'gulp' );
 var fs              = require( 'fs' );
-var browserify      = require( 'browserify' );
-var babelify        = require( 'babelify' );
-var uglify          = require( 'gulp-uglify' );
-var header          = require( 'gulp-header' );
+const browserify    = require( 'browserify' );
+const babelify      = require( 'babelify' );
+const uglify        = require( 'gulp-uglify' );
+const header        = require( 'gulp-header' );
 
-var _package        = require( './package.json' );
+const _package      = require( './package.json' );
 
-var now             = new Date();
-var year            = now.getUTCFullYear();
+const now             = new Date();
+const year            = now.getUTCFullYear();
 
-var licenceLong     = '/*!\n' +
-                      ' * Flounder React JavaScript Stylable Selectbox v' + _package.version + '\n' +
-                      ' * ' + _package.homepage + '\n' +
-                      ' *\n' +
-                      ' * Copyright ' + ( 2015 === year ? year : '2015-' + year ) + ' Sociomantic Labs and other contributors\n' +
-                      ' * Released under the MIT license\n' +
-                      ' * https://github.com/sociomantic-tsunami/flounder-react/license\n' +
-                      ' *\n' +
-                      ' * Date: ' + now.toDateString() + '\n' +
-                      ' * "This, so far, is the best React Flounder ever"\n' +
-                      ' */\n';
+const licenceLong     = `/*!
+                        * Flounder React JavaScript Stylable Selectbox v${_package.version}
+                        * ${_package.homepage}
+                        *
+                        * Copyright 2015-${year} Sociomantic Labs and other contributors
+                        * Released under the MIT license
+                        * https://github.com/sociomantic-tsunami/flounder-react/license
+                        *
+                        * Date: ${now.toDateString()}
+                        * "This, so far, is the best Flounder ever"
+                        */`;
 
 
 gulp.task( 'addLiscence', function()
@@ -31,25 +31,16 @@ gulp.task( 'addLiscence', function()
 } );
 
 
-gulp.task( 'buildTests', function()
-{
-    browserify( './tests/tests.js' )
-        .transform( babelify, { stage : 0 } )
-        .bundle()
-        .pipe( fs.createWriteStream( __dirname + '/tests/tests.dist.js' ) )
-} );
-
-
 gulp.task( 'demo', function()
 {
     browserify( './demo/demo.js' )
-        .transform( babelify, { stage : 0 } )
+        .transform( babelify )
         .bundle()
-        .pipe( fs.createWriteStream( __dirname + '/demo/demoDist.js' ) );
+        .pipe( fs.createWriteStream( `${__dirname }/demo/demoDist.js` ) );
 } );
 
 
 gulp.task( 'default', [], function()
 {
-    gulp.start( [ 'addLiscence', 'demo', 'buildTests' ] );
+    gulp.start( [ 'addLiscence', 'demo' ] );
 } );

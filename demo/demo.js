@@ -4,9 +4,12 @@ import ReactDOM             from 'react-dom';
 import FlounderReact        from '../src/flounder.react.jsx';
 import µ                    from 'microbejs';
 
+
 window.FlounderReact = FlounderReact;
 
 let _slice = Array.prototype.slice;
+
+
 /**
  * example data object
  *

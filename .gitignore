@@ -14,11 +14,11 @@ $RECYCLE.BIN/
 
 node_modules/
 .tmp
-config.js
 npm-debug.log
 
 src/core
+src/flounder-structure.css
 
 dist/**
 demo/demoDist.js
-tests/tests.dist.js
+coverage/

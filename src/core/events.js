@@ -2,6 +2,9 @@
 import classes          from './classes';
 import search           from './search';
 import utils            from './utils';
+import keycodes         from './keycodes';
+
+const nativeSlice = Array.prototype.slice;
 
 const events = {
 
@@ -12,16 +15,29 @@ const events = {
      *
      * @return _Void_
      */
-    addFirstTouchListeners : function()
+    addFirstTouchListeners()
     {
         let refs = this.refs;
-        refs.selected.addEventListener( 'click', this.firstTouchController );
-        refs.select.addEventListener( 'focus', this.firstTouchController );
+        refs.selected.addEventListener( `click`, this.firstTouchController );
+        refs.select.addEventListener( `focus`, this.firstTouchController );
 
         if ( this.props.openOnHover )
         {
-            refs.wrapper.addEventListener( 'mouseenter', this.firstTouchController );
+            refs.wrapper.addEventListener( `mouseenter`, this.firstTouchController );
         }
+    },
+
+
+    /**
+     * ## addHoverClass
+     *
+     * adds a hover class to an element
+     *
+     * @return Void_
+     */
+    addHoverClass()
+    {
+        utils.addClass( this, classes.HOVER );
     },
 
 
@@ -32,25 +48,25 @@ const events = {
      *
      * @return _Void_
      */
-    addListeners : function( refs, props )
+    addListeners( refs )
     {
         let ios         = this.isIos;
-        let changeEvent = ios ? 'blur' : 'change';
+        let changeEvent = ios ? `blur` : `change`;
 
 
         refs.select.addEventListener( changeEvent, this.divertTarget );
+        refs.flounder.addEventListener( `keydown`, this.checkFlounderKeypress );
 
-        refs.flounder.addEventListener( 'keydown', this.checkFlounderKeypress );
 
-        if ( props.openOnHover )
+        if ( this.props.openOnHover )
         {
             let wrapper = refs.wrapper;
-            wrapper.addEventListener( 'mouseenter', this.toggleList );
-            wrapper.addEventListener( 'mouseleave', this.toggleList );
+            wrapper.addEventListener( `mouseenter`, this.toggleList );
+            wrapper.addEventListener( `mouseleave`, this.toggleList );
         }
         else
         {
-            refs.selected.addEventListener( 'click', this.toggleList );
+            refs.selected.addEventListener( `click`, this.toggleList );
         }
 
         this.addFirstTouchListeners();
@@ -64,54 +80,77 @@ const events = {
 
 
     /**
+     * ## addMultipleTags
+     *
+     * adds a tag for each selected option and attaches the correct events to it
+     *
+     * @param {Array} selectedOptions currently selected options
+     * @param {DOMElement} multiTagWrapper parent element of the tags
+     *
+     * @return _Void_
+     */
+    addMultipleTags( selectedOptions, multiTagWrapper )
+    {
+        selectedOptions.forEach( option =>
+        {
+            if ( option.value !== `` )
+            {
+                let tag = this.buildMultiTag( option );
+
+                multiTagWrapper.appendChild( tag );
+            }
+            else
+            {
+                option.selected = false;
+            }
+        } );
+
+        nativeSlice.call( multiTagWrapper.children, 0 ).forEach( el =>
+        {
+            let firstChild = el.firstChild;
+
+            firstChild.addEventListener( `click`, this.removeMultiTag );
+            el.addEventListener( `keydown`, this.checkMultiTagKeydown );
+        } );
+    },
+
+
+    /**
      * ## addOptionsListeners
      *
      * adds listeners to the options
      *
      * @return _Void_
      */
-    addOptionsListeners : function()
+    addOptionsListeners()
     {
         this.refs.data.forEach( ( dataObj, i ) =>
         {
-            if ( dataObj.tagName === 'DIV' )
+            if ( dataObj.tagName === `DIV` )
             {
-                dataObj.addEventListener( 'mouseenter', this.addHoverClass );
-                dataObj.addEventListener( 'mouseleave', this.removeHoverClass );
+                dataObj.addEventListener( `mouseenter`, this.addHoverClass );
+                dataObj.addEventListener( `mouseleave`, this.removeHoverClass );
 
-                dataObj.addEventListener( 'click', this.clickSet );
+                dataObj.addEventListener( `click`, this.clickSet );
             }
         } );
-    },
-
-
-    addHoverClass : function()
-    {
-        utils.addClass( this, classes.HOVER );
-    },
-
-
-    removeHoverClass : function()
-    {
-        utils.removeClass( this, classes.HOVER );
     },
 
 
     /**
      * ## addPlaceholder
      *
-     * called on body click, this determines what (if anything) should be
-     * refilled into the the placeholder position
+     * determines what (if anything) should be refilled into the the
+     * placeholder position
      *
      * @return _Void_
      */
-    addPlaceholder : function()
+    addPlaceholder()
     {
-        let multiTags       = this.multipleTags;
         let selectedValues  = this.getSelectedValues();
-        let val             = selectedValues[0];
+        let val             = selectedValues[ 0 ];
         let selectedItems   = this.getSelected();
-        let selectedText    = selectedItems.length ? selectedItems[0].innerHTML : '';
+        let selectedText    = selectedItems.length ? selectedItems[ 0 ].innerHTML : ``;
         let selectedCount   = selectedValues.length;
         let selected        = this.refs.selected;
 
@@ -121,27 +160,27 @@ const events = {
                 this.setByIndex( 0 );
                 break;
             case 1:
-                selected.innerHTML = val === '' ? this.placeholder : selectedText;
+                selected.innerHTML = selectedText;
                 break;
             default:
                 selected.innerHTML = this.multipleMessage;
                 break;
         }
 
-        if ( multiTags )
+        if ( this.multipleTags )
         {
             if ( selectedCount === 0 )
             {
                 this.setByIndex( 0 );
             }
 
-            if ( !val || val === '' )
+            if ( !val || val === `` )
             {
                 selected.innerHTML = this.placeholder;
             }
             else
             {
-                selected.innerHTML = '';
+                selected.innerHTML = ``;
             }
         }
     },
@@ -154,12 +193,13 @@ const events = {
      *
      * @return _Void_
      */
-    addSearchListeners : function()
+    addSearchListeners()
     {
         let search = this.refs.search;
-        search.addEventListener( 'click', this.toggleListSearchClick );
-        search.addEventListener( 'keyup', this.fuzzySearch );
-        search.addEventListener( 'focus', this.clearPlaceholder );
+        search.addEventListener( `click`, this.toggleListSearchClick );
+        search.addEventListener( `focus`, this.toggleListSearchClick );
+        search.addEventListener( `keyup`, this.fuzzySearch );
+        search.addEventListener( `focus`, this.clearPlaceholder );
     },
 
 
@@ -171,20 +211,21 @@ const events = {
      *
      * @return _Void_
      */
-    addSelectKeyListener : function()
+    addSelectKeyListener()
     {
         let refs    = this.refs;
         let select  = refs.select;
 
-        select.addEventListener( 'keyup', this.setSelectValue );
-        select.addEventListener( 'keydown', this.setKeypress );
+        select.addEventListener( `keyup`, this.setSelectValue );
+        select.addEventListener( `keydown`, this.setKeypress );
 
         // weird shit
         // http://stackoverflow.com/questions/34660500/mobile-safari-multi-select-bug
         if ( this.isIos )
         {
-            let firstOption = select[0];
-            let plug        = document.createElement( 'OPTION' );
+            let firstOption = select.children[0];
+
+            let plug        = document.createElement( `OPTION` );
             plug.disabled   = true;
             plug.className  = classes.PLUG;
             select.insertBefore( plug, firstOption );
@@ -203,7 +244,7 @@ const events = {
      *
      * @return _Void_
      */
-    catchBodyClick : function( e )
+    catchBodyClick( e )
     {
         if ( ! this.checkClickTarget( e ) )
         {
@@ -223,9 +264,10 @@ const events = {
      *
      * @return _Boolean_
      */
-    checkClickTarget : function( e, target )
+    checkClickTarget( e, target )
     {
         target = target || e.target;
+
         if ( target === document )
         {
             return false;
@@ -241,6 +283,57 @@ const events = {
         {
             return this.checkClickTarget( e, target );
         }
+
+        return false;
+    },
+
+
+    /**
+     * ## checkEnterOnSearch
+     *
+     * if enter is pressed in the searchox, if there is only one option matching,
+     * this selects it
+     *
+     * @param {Object} e event object
+     * @param {Object} refs element references
+     *
+     * @return _Void_
+     */
+    checkEnterOnSearch( e , refs )
+    {
+        let val  = e.target.value;
+
+        if ( val && val !== '' )
+        {
+            let res         = [];
+            let options     = refs.data.length;
+            let selected    = this.getSelected();
+            let matches     = this.search.isThereAnythingRelatedTo( val );
+
+            matches.forEach( el =>
+            {
+                let index   = el.i;
+                el          = refs.selectOptions[ index ];
+
+                if ( selected.indexOf( el ) === -1 )
+                {
+                    res.push( el );
+                }
+            } );
+
+            if ( res.length === 1 )
+            {
+                let el = res[ 0 ];
+                this.setByIndex( el.index, this.multiple );
+
+                if ( this.multipleTags )
+                {
+                    setTimeout( () => refs.search.focus(), 200 );
+                }
+            }
+
+            return res;
+        }
         else
         {
             return false;
@@ -255,41 +348,165 @@ const events = {
      *
      * @return _Void_
      */
-    checkFlounderKeypress : function( e )
+    checkFlounderKeypress( e )
     {
         let keyCode = e.keyCode;
+        let refs    = this.refs;
 
-        if ( keyCode === 13 || ( keyCode === 32 && e.target.tagName !== 'INPUT' ) )
+        if ( keyCode === keycodes.TAB )
         {
+            let optionsList = refs.optionsListWrapper;
+            let wrapper     = refs.wrapper;
+
+            this.addPlaceholder();
+            this.toggleClosed( e, optionsList, refs, wrapper, true );
+        }
+        else if ( keyCode === keycodes.ENTER ||
+            ( keyCode === keycodes.SPACE && e.target.tagName !== `INPUT` ) )
+        {
+            if ( keyCode === keycodes.ENTER && this.search &&
+                    utils.hasClass( refs.wrapper, classes.OPEN ) )
+            {
+                return this.checkEnterOnSearch( e, refs );
+            }
+
             e.preventDefault();
             this.toggleList( e );
         }
         else if ( ( keyCode >= 48 && keyCode <= 57 ) ||
                     ( keyCode >= 65 && keyCode <= 90 ) ) // letters - allows native behavior
         {
-            let refs = this.refs;
-
-            if ( refs.search && e.target.tagName === 'INPUT' )
+            if ( refs.search && e.target.tagName === `INPUT` )
             {
-                refs.selected.innerHTML = '';
+                refs.selected.innerHTML = ``;
             }
         }
     },
 
 
     /**
-     * ## checkPlaceholder
+     * ## checkMultiTagKeydown
      *
-     * clears or re-adds the placeholder
+     * when a tag is selected, this decided how to handle it by either
+     * passing the event on, or handling tag removal
      *
      * @param {Object} e event object
      *
      * @return _Void_
      */
-     clearPlaceholder : function( e )
+    checkMultiTagKeydown( e )
+    {
+        let keyCode                 = e.keyCode;
+        let self                    = this;
+        let refs                    = this.refs;
+        let children                = refs.multiTagWrapper.children;
+        let target                  = e.target;
+        let index                   = nativeSlice.call( children, 0 ).indexOf( target );
+
+        function focusSearch()
+        {
+            refs.search.focus();
+            self.clearPlaceholder();
+            self.toggleListSearchClick( e );
+        }
+
+        if ( keyCode === keycodes.LEFT || keyCode === keycodes.RIGHT ||
+            keyCode === keycodes.BACKSPACE )
+        {
+            e.preventDefault();
+            e.stopPropagation();
+
+
+            if ( keyCode === keycodes.BACKSPACE )
+            {
+                self.checkMultiTagKeydownRemove( target, focusSearch, index );
+            }
+            else
+            {
+                self.checkMultiTagKeydownNavigate( focusSearch, keyCode, index );
+            }
+        }
+        else if ( e.key.length < 2 )
+        {
+            focusSearch();
+        }
+    },
+
+
+    /**
+     * ## checkMultiTagKeydownNavigate
+     *
+     * after left or right is hit while a multitag is focused, this focus' on
+     * the next tag in that direction or the the search field
+     *
+     * @param {Function} focusSearch function to focus on the search field
+     * @param {Number} keyCode keyclode from te keypress event
+     * @param {Number} index index of currently focused tag
+     *
+     * @return _Void_
+     */
+    checkMultiTagKeydownNavigate( focusSearch, keyCode, index )
+    {
+        let children    = this.refs.multiTagWrapper.children;
+
+        let adjustment  = keyCode - 38;
+        let newIndex    = index + adjustment;
+        let length      = children.length - 1;
+
+        if ( newIndex > length )
+        {
+            focusSearch();
+        }
+        else if ( newIndex >= 0 )
+        {
+            children[ newIndex ].focus();
+        }
+    },
+
+
+    /**
+     * ## checkMultiTagKeydownRemove
+     *
+     * after a backspece while a multitag is focused, this removes the tag and
+     * focus' on the next
+     *
+     * @param {DOMElement} target focused multitag
+     * @param {Function} focusSearch function to focus on the search field
+     * @param {Number} index index of currently focused tag
+     *
+     * @return _Void_
+     */
+    checkMultiTagKeydownRemove( target, focusSearch, index )
+    {
+        let children    = this.refs.multiTagWrapper.children;
+        let siblings    = children.length - 1;
+
+        target.firstChild.click();
+
+        if ( siblings > 0 )
+        {
+            children[ index === 0 ? 0 : index - 1 ].focus();
+        }
+        else
+        {
+            focusSearch();
+        }
+    },
+
+
+    /**
+     * ## clearPlaceholder
+     *
+     * clears the placeholder
+     *
+     * @param {Object} e event object
+     *
+     * @return _Void_
+     */
+     clearPlaceholder()
      {
         let selected    = this.refs.selected;
-        selected.innerHTML = '';
+        selected.innerHTML = ``;
      },
 
 
@@ -302,8 +519,11 @@ const events = {
      *
      * @return _Void_
      */
-    clickSet : function( e )
+    clickSet( e )
     {
+        e.preventDefault();
+        e.stopPropagation();
+
         this.setSelectValue( {}, e );
 
         if ( !this.multiple || !e[ this.multiSelect ] )
@@ -314,21 +534,111 @@ const events = {
 
 
     /**
+     * ## displayMultipleTags
+     *
+     * handles the display and management of tags
+     *
+     * @param  {Array} selectedOptions currently selected options
+     * @param  {DOMElement} selected div to display currently selected options
+     *
+     * @return _Void_
+     */
+    displayMultipleTags( selectedOptions, multiTagWrapper )
+    {
+        nativeSlice.call( multiTagWrapper.children, 0 ).forEach( el =>
+        {
+            let firstChild = el.firstChild;
+
+            firstChild.removeEventListener( `click`, this.removeMultiTag );
+            el.removeEventListener( `keydown`, this.checkMultiTagKeydown );
+        } );
+
+        multiTagWrapper.innerHTML = ``;
+
+        if ( selectedOptions.length > 0 )
+        {
+            this.addMultipleTags( selectedOptions, multiTagWrapper );
+        }
+        else
+        {
+            this.addPlaceholder();
+        }
+
+        this.setTextMultiTagIndent();
+    },
+
+
+    /**
+     * ## displaySelected
+     *
+     * formats and displays the chosen options
+     *
+     * @param {DOMElement} selected display area for the selected option(s)
+     * @param {Object} refs element references
+     *
+     * @return _Void_
+     */
+    displaySelected( selected, refs )
+    {
+        let value = [];
+        let index = -1;
+
+        let selectedOption  = this.getSelected();
+        let selectedLength  = selectedOption.length;
+        let multipleTags    = this.multipleTags;
+
+        if ( !multipleTags && selectedLength ===  1 )
+        {
+            index               = selectedOption[0].index;
+            value               = selectedOption[0].value;
+            selected.innerHTML  = refs.data[ index ].innerHTML;
+        }
+        else if ( !multipleTags && selectedLength === 0 )
+        {
+            let defaultValue    = this._default;
+            index               = defaultValue.index;
+            value               = defaultValue.value;
+            selected.innerHTML  = defaultValue.text;
+        }
+        else
+        {
+            if ( multipleTags )
+            {
+                selected.innerHTML  = ``;
+                this.displayMultipleTags( selectedOption, refs.multiTagWrapper );
+            }
+            else
+            {
+                selected.innerHTML  = this.multipleMessage;
+            }
+
+            index = selectedOption.map( option => option.index );
+            value = selectedOption.map( option => option.value );
+        }
+
+        selected.setAttribute( `data-value`, value );
+        selected.setAttribute( `data-index`, index );
+    },
+
+
+    /**
      * ## divertTarget
+     *
+     * @param {Object} e event object
      *
      * on interaction with the raw select box, the target will be diverted to
      * the corresponding flounder list element
      *
      * @return _Void_
      */
-    divertTarget : function( e )
+    divertTarget( e )
     {
         // weird shit
         // http://stackoverflow.com/questions/34660500/mobile-safari-multi-select-bug
         if ( this.isIos )
         {
             let select  = this.refs.select;
-            let plug    = select.querySelector( '.' + classes.PLUG );
+            let plug    = select.querySelector( `.${classes.PLUG}` );
 
             if ( plug )
             {
@@ -353,7 +663,7 @@ const events = {
 
         if ( !this.multiple )
         {
-            this.toggleList( e, 'close' );
+            this.toggleList( e, `close` );
         }
     },
 
@@ -368,7 +678,7 @@ const events = {
      *
      * @return _Void_
      */
-    firstTouchController : function( e )
+    firstTouchController( e )
     {
         let refs = this.refs;
 
@@ -378,16 +688,29 @@ const events = {
         }
         catch( e )
         {
-            console.log( 'something may be wrong in "onFirstTouch"', e );
+            console.warn( `something may be wrong in "onFirstTouch"`, e );
         }
 
-        refs.selected.removeEventListener( 'click', this.firstTouchController );
-        refs.select.removeEventListener( 'focus', this.firstTouchController );
+        refs.selected.removeEventListener( `click`, this.firstTouchController );
+        refs.select.removeEventListener( `focus`, this.firstTouchController );
 
         if ( this.props.openOnHover )
         {
-            refs.wrapper.removeEventListener( 'mouseenter', this.firstTouchController );
+            refs.wrapper.removeEventListener( `mouseenter`, this.firstTouchController );
         }
+    },
+
+
+    /**
+     * ## removeHoverClass
+     *
+     * removes a hover class from an element
+     *
+     * @return Void_
+     */
+    removeHoverClass()
+    {
+        utils.removeClass( this, classes.HOVER );
     },
 
 
@@ -398,26 +721,97 @@ const events = {
      *
      * @return _Void_
      */
-    removeListeners : function()
+    removeListeners()
     {
         let refs        = this.refs;
 
         this.removeOptionsListeners();
 
-        let qsHTML          = document.querySelector( 'html' );
+        let qsHTML          = document.querySelector( `html` );
         let catchBodyClick  = this.catchBodyClick;
-        qsHTML.removeEventListener( 'click', catchBodyClick );
-        qsHTML.removeEventListener( 'touchend', catchBodyClick );
+        qsHTML.removeEventListener( `click`, catchBodyClick );
+        qsHTML.removeEventListener( `touchend`, catchBodyClick );
 
         let select = refs.select;
-        select.removeEventListener( 'change', this.divertTarget  );
-        select.removeEventListener( 'blur', this.divertTarget );
-        refs.selected.removeEventListener( 'click', this.toggleList );
-        refs.flounder.removeEventListener( 'keydown', this.checkFlounderKeypress );
+        select.removeEventListener( `change`, this.divertTarget  );
+        select.removeEventListener( `blur`, this.divertTarget );
+        refs.selected.removeEventListener( `click`, this.toggleList );
+        refs.flounder.removeEventListener( `keydown`, this.checkFlounderKeypress );
 
         if ( this.search )
         {
             this.removeSearchListeners();
+        }
+    },
+
+
+    /**
+     * ## removeMultiTag
+     *
+     * removes a multi selection tag on click; fixes all references to value and state
+     *
+     * @param  {Object} e event object
+     *
+     * @return _Void_
+     */
+    removeMultiTag( e )
+    {
+        e.preventDefault();
+        e.stopPropagation();
+
+        let value;
+        let index;
+        let refs            = this.refs;
+        let select          = refs.select;
+        let selected        = refs.selected;
+        let target          = e.target;
+        let defaultValue    = this._default;
+        let data            = this.refs.data;
+        let targetIndex     = target.getAttribute( `data-index` );
+
+        select[ targetIndex ].selected = false;
+
+        let selectedOptions = this.getSelected();
+
+        utils.removeClass( data[ targetIndex ], classes.SELECTED_HIDDEN );
+        utils.removeClass( data[ targetIndex ], classes.SELECTED );
+
+        target.removeEventListener( `click`, this.removeMultiTag );
+
+        let span = target.parentNode;
+        span.parentNode.removeChild( span );
+
+        if ( selectedOptions.length === 0 )
+        {
+            this.addPlaceholder();
+            index               = -1;
+            value               = ``;
+        }
+        else
+        {
+            value = selectedOptions.map( function( option )
+            {
+                return option.value;
+            } );
+
+            index = selectedOptions.map( function( option )
+            {
+                return option.index;
+            } );
+        }
+
+        this.setTextMultiTagIndent();
+
+        selected.setAttribute( `data-value`, value );
+        selected.setAttribute( `data-index`, index );
+
+        try
+        {
+            this.onSelect( e, this.getSelectedValues() );
+        }
+        catch( e )
+        {
+            console.warn( `something may be wrong in "onSelect"`, e );
         }
     },
 
@@ -429,13 +823,16 @@ const events = {
      *
      * @return _Void_
      */
-    removeOptionsListeners : function()
+    removeOptionsListeners()
     {
         this.refs.data.forEach( dataObj =>
         {
-            if ( dataObj.tagName === 'DIV' )
+            if ( dataObj.tagName === `DIV` )
             {
-                dataObj.removeEventListener( 'click', this.clickSet );
+                dataObj.removeEventListener( `click`, this.clickSet );
+
+                dataObj.removeEventListener( `mouseenter`, this.addHoverClass );
+                dataObj.removeEventListener( `mouseleave`, this.removeHoverClass );
             }
         } );
     },
@@ -448,12 +845,50 @@ const events = {
      *
      * @return _Void_
      */
-    removeSearchListeners : function()
+    removeSearchListeners()
     {
         let search = this.refs.search;
-        search.removeEventListener( 'click', this.toggleList );
-        search.removeEventListener( 'keyup', this.fuzzySearch );
-        search.removeEventListener( 'focus', this.clearPlaceholder );
+        search.removeEventListener( `click`, this.toggleListSearchClick );
+        search.removeEventListener( `focus`, this.toggleListSearchClick );
+        search.removeEventListener( `keyup`, this.fuzzySearch );
+        search.removeEventListener( `focus`, this.clearPlaceholder );
+    },
+
+
+    /**
+     * ## removeSelectedClass
+     *
+     * removes the [[this.selectedClass]] from all data
+     *
+     * @return _Void_
+     */
+    removeSelectedClass( data )
+    {
+        data = data || this.refs.data;
+
+        data.forEach( ( dataObj, i ) =>
+        {
+            utils.removeClass( dataObj, this.selectedClass );
+        } );
+    },
+
+
+    /**
+     * ## removeSelectedValue
+     *
+     * sets the selected property to false for all data
+     *
+     * @return _Void_
+     */
+    removeSelectedValue( data )
+    {
+        data            = data || this.refs.data;
+        let optionTags  = this.refs.select.children;
+
+        data.forEach( ( d, i ) =>
+        {
+            optionTags[ i ].selected = false;
+        } );
     },
 
 
@@ -464,88 +899,114 @@ const events = {
      *
      * @return _Void_
      */
-    removeSelectKeyListener : function()
+    removeSelectKeyListener()
     {
         let select = this.refs.select;
-        select.removeEventListener( 'keyup', this.setSelectValue );
+        select.removeEventListener( `keyup`, this.setSelectValue );
     },
 
 
     /**
      * ## setKeypress
      *
-     * handles arrow key selection
+     * handles arrow key and enter selection
      *
      * @param {Object} e event object
      *
      * @return _Void_
      */
-    setKeypress : function( e )
+    setKeypress( e )
     {
         let refs        = this.refs;
         let increment   = 0;
         let keyCode     = e.keyCode;
 
-        let nonCharacterKeys = [ 16, 17, 18, 20, 91, 93 ]
+        let nonCharacterKeys = keycodes.NON_CHARACTER_KEYS;
 
         if ( nonCharacterKeys.indexOf( keyCode ) === -1 )
         {
-            if ( this.multipleTags )
+            if ( keyCode === keycodes.TAB )
             {
-                e.preventDefault();
+                let optionsList = refs.optionsListWrapper;
+                let wrapper     = refs.wrapper;
+
+                this.addPlaceholder();
+                this.toggleClosed( e, optionsList, refs, wrapper, true );
                 return false;
             }
 
-            if ( keyCode === 13 || keyCode === 27 || keyCode === 32 ) // space enter escape
+            if ( keyCode === keycodes.ENTER || keyCode === keycodes.ESCAPE ||
+                    keyCode === keycodes.SPACE )
             {
                 this.toggleList( e );
                 return false;
             }
-            else if ( !window.sidebar && ( keyCode === 38 || keyCode === 40 ) ) // up and down
-            {
-                e.preventDefault();
-                let search = refs.search;
 
-                if ( search )
+            if ( keyCode === keycodes.UP || keyCode === keycodes.DOWN )
+            {
+                if ( !window.sidebar )
                 {
-                    search.value = '';
+                    e.preventDefault();
+                    let search = refs.search;
+
+                    if ( search )
+                    {
+                        search.value = ``;
+                    }
+
+                    increment = keyCode - 39;
                 }
 
-                increment = keyCode - 39;
-            }
-            else if ( ( keyCode >= 48 && keyCode <= 57 ) ||
-                    ( keyCode >= 65 && keyCode <= 90 ) ) // letters - allows native behavior
-            {
-                return true;
+                this.setKeypressElement( e, increment );
             }
 
-            let selectTag           = refs.select;
-            let data                = refs.data;
-            let dataMaxIndex        = data.length - 1;
-            let index               = selectTag.selectedIndex + increment;
-
-            if ( index > dataMaxIndex )
-            {
-                index = 0;
-            }
-            else if ( index < 0 )
-            {
-                index = dataMaxIndex;
-            }
-
-            selectTag.selectedIndex = index;
-
-            let hasClass            = utils.hasClass;
-            let dataAtIndex         = data[ index ];
-
-            if ( hasClass( dataAtIndex, classes.HIDDEN ) ||
-                 hasClass( dataAtIndex, classes.SELECTED_HIDDEN ) ||
-                 hasClass( dataAtIndex, classes.SEARCH_HIDDEN ) ||
-                 hasClass( dataAtIndex, classes.DISABLED ) )
-            {
-                this.setKeypress( e );
-            }
+            return true;
         }
+    },
+
+
+    /**
+     * ## setKeypressElement
+     *
+     * sets the element after the keypress.  if the element is hidden or
+     * disabled, it passes the event back to setKeypress to process the next
+     * element
+     *
+     * @param {Object} e event object
+     * @param {Number} increment amount to change the index by
+     *
+     * @return _Void_
+     */
+    setKeypressElement( e, increment )
+    {
+        let refs                = this.refs;
+        let selectTag           = refs.select;
+        let data                = refs.data;
+        let dataMaxIndex        = data.length - 1;
+        let index               = selectTag.selectedIndex + increment;
+
+        if ( index > dataMaxIndex )
+        {
+            index = 0;
+        }
+        else if ( index < 0 )
+        {
+            index = dataMaxIndex;
+        }
+
+        selectTag.selectedIndex = index;
+
+        let hasClass            = utils.hasClass;
+        let dataAtIndex         = data[ index ];
+
+        if ( hasClass( dataAtIndex, classes.HIDDEN ) ||
+             hasClass( dataAtIndex, classes.SELECTED_HIDDEN ) ||
+             hasClass( dataAtIndex, classes.SEARCH_HIDDEN ) ||
+             hasClass( dataAtIndex, classes.DISABLED ) )
+        {
+            this.setKeypress( e );
+        }
+
     },
 
 
@@ -562,7 +1023,7 @@ const events = {
      *
      * @return _Void_
      */
-    setSelectValue : function( obj, e )
+    setSelectValue( obj, e )
     {
         let refs        = this.refs;
         let keyCode;
@@ -584,8 +1045,8 @@ const events = {
             // tab, shift, ctrl, alt, caps, cmd
             let nonKeys = [ 9, 16, 17, 18, 20, 91 ];
 
-            if ( e || obj.type === 'blur' ||
-                ( !keyCode && obj.type === 'change' ) ||
+            if ( e || obj.type === `blur` ||
+                ( !keyCode && obj.type === `change` ) ||
                 ( keyCode && nonKeys.indexOf( keyCode ) === -1 ) )
             {
                 if ( this.toggleList.justOpened && !e )
@@ -600,7 +1061,7 @@ const events = {
                     }
                     catch( e )
                     {
-                        console.log( 'something may be wrong in "onSelect"', e );
+                        console.warn( `something may be wrong in "onSelect"`, e );
                     }
                 }
             }
@@ -617,7 +1078,7 @@ const events = {
      *
      * @return _Void_
      */
-    setSelectValueButton : function()
+    setSelectValueButton()
     {
         let refs            = this.refs;
         let data            = refs.data;
@@ -651,7 +1112,7 @@ const events = {
      *
      * @return _Void_
      */
-    setSelectValueClick : function( e )
+    setSelectValueClick( e )
     {
         let _multiple       = this.multiple;
         let refs            = this.refs;
@@ -667,7 +1128,7 @@ const events = {
         let target              = e.target;
 
         utils.toggleClass( target, selectedClass );
-        index                   = target.getAttribute( 'data-index' );
+        index                   = target.getAttribute( `data-index` );
 
         selectedOption          = refs.selectOptions[ index ];
 
@@ -675,11 +1136,36 @@ const events = {
 
         let firstOption = refs.selectOptions[ 0 ];
 
-        if ( firstOption.value === '' && this.getSelected().length > 1 )
+        if ( firstOption.value === `` && this.getSelected().length > 1 )
         {
             utils.removeClass( refs.data[0], selectedClass );
             refs.selectOptions[0].selected = false;
         }
+    },
+
+
+    /**
+     * ## setTextMultiTagIndent
+     *
+     * sets the text-indent on the search field to go around selected tags
+     *
+     * @return _Void_
+     */
+    setTextMultiTagIndent()
+    {
+        let refs    = this.refs;
+        let search  = refs.search;
+
+        let offset  = 0;
+
+        nativeSlice.call( refs.multiTagWrapper.children, 0 ).forEach( ( e, i ) =>
+        {
+            offset += utils.getElWidth( e, this.setTextMultiTagIndent, this );
+        } );
+
+
+        /* istanbul ignore next */
+        search.style.textIndent = offset > 0 ? `${offset}px` : ``;
     },
 
 
@@ -692,25 +1178,29 @@ const events = {
      * @param {DOMElement} optionsList the options list
      * @param {Object} refs contains the references of the elements in flounder
      * @param {DOMElement} wrapper wrapper of flounder
+     * @param {Boolean} exit prevents refocus. used while tabbing away
      *
      * @return _Void_
      */
-    toggleClosed : function( e, optionsList, refs, wrapper )
+    toggleClosed( e, optionsList, refs, wrapper, exit = false )
     {
         utils.addClass( optionsList, classes.HIDDEN );
         this.removeSelectKeyListener();
-        utils.removeClass( wrapper, 'open' );
+        utils.removeClass( wrapper, classes.OPEN );
 
-        let qsHTML = document.querySelector( 'html' );
-        qsHTML.removeEventListener( 'click', this.catchBodyClick );
-        qsHTML.removeEventListener( 'touchend', this.catchBodyClick );
+        let qsHTML = document.querySelector( `html` );
+        qsHTML.removeEventListener( `click`, this.catchBodyClick );
+        qsHTML.removeEventListener( `touchend`, this.catchBodyClick );
 
         if ( this.search )
         {
             this.fuzzySearchReset();
         }
 
-        refs.flounder.focus();
+        if ( !exit )
+        {
+            refs.flounder.focus();
+        }
 
         if ( this.ready )
         {
@@ -720,24 +1210,8 @@ const events = {
             }
             catch( e )
             {
-                console.log( 'something may be wrong in "onClose"', e );
+                console.warn( `something may be wrong in "onClose"`, e );
             }
-        }
-    },
-
-
-    /**
-     * ## toggleListSearchClick
-     *
-     * toggleList wrapper for search.  only triggered if flounder is closed
-     *
-     * @return _Void_
-     */
-    toggleListSearchClick : function( e )
-    {
-        if ( !utils.hasClass( this.refs.wrapper, 'open' ) )
-        {
-            this.toggleList( e, 'open' );
         }
     },
 
@@ -751,29 +1225,43 @@ const events = {
      *
      * @return _Void_
      */
-    toggleList : function( e, force )
+    toggleList( e, force )
     {
         let refs        = this.refs;
         let optionsList = refs.optionsListWrapper;
         let wrapper     = refs.wrapper;
-        let hasClass    = utils.hasClass;
+        let isHidden    = utils.hasClass( optionsList, classes.HIDDEN );
         let type        = e.type;
 
-        if ( type === 'mouseleave' || force === 'close' ||
-            !hasClass( optionsList, classes.HIDDEN ) )
+        if ( type === `mouseleave` || force === `close` || !isHidden )
         {
             this.toggleList.justOpened = false;
             this.toggleClosed( e, optionsList, refs, wrapper );
         }
-        else if ( type === 'mouseenter' || force === 'open' ||
-            force !== 'close' && utils.hasClass( optionsList, classes.HIDDEN ) )
+        else
         {
-            if ( type === 'keydown' )
+            if ( type === `keydown` )
             {
                 this.toggleList.justOpened = true;
             }
 
             this.toggleOpen( e, optionsList, refs, wrapper );
+        }
+    },
+
+
+    /**
+     * ## toggleListSearchClick
+     *
+     * toggleList wrapper for search.  only triggered if flounder is closed
+     *
+     * @return _Void_
+     */
+    toggleListSearchClick( e )
+    {
+        if ( !utils.hasClass( this.refs.wrapper, classes.OPEN ) )
+        {
+            this.toggleList( e, `open` );
         }
     },
 
@@ -790,19 +1278,19 @@ const events = {
      *
      * @return _Void_
      */
-    toggleOpen : function( e, optionsList, refs, wrapper )
+    toggleOpen( e, optionsList, refs, wrapper )
     {
         this.addSelectKeyListener();
 
-        if ( !this.isIos || this.search || ( this.multipleTags === true && this.multiple === true ) )
+        if ( !this.isIos || this.search || this.multipleTags === true )
         {
             utils.removeClass( optionsList, classes.HIDDEN );
-            utils.addClass( wrapper, 'open' );
+            utils.addClass( wrapper, classes.OPEN );
 
-            let qsHTML = document.querySelector( 'html' );
+            let qsHTML = document.querySelector( `html` );
 
-            qsHTML.addEventListener( 'click', this.catchBodyClick );
-            qsHTML.addEventListener( 'touchend', this.catchBodyClick );
+            qsHTML.addEventListener( `click`, this.catchBodyClick );
+            qsHTML.addEventListener( `touchend`, this.catchBodyClick );
         }
 
 
@@ -811,10 +1299,7 @@ const events = {
             let index       = refs.select.selectedIndex;
             let selectedDiv = refs.data[ index ];
 
-            if ( selectedDiv )
-            {
-                utils.scrollTo( selectedDiv  );
-            }
+            utils.scrollTo( selectedDiv  );
         }
 
         if ( this.search )
@@ -830,7 +1315,7 @@ const events = {
             }
             catch( e )
             {
-                console.log( 'something may be wrong in "onOpen"', e );
+                console.warn( `something may be wrong in "onOpen"`, e );
             }
         }
     }

@@ -1,4 +1,14 @@
-
+/*!
+                        * Flounder React JavaScript Stylable Selectbox v0.1.2
+                        * https://github.com/sociomantic-tsunami/flounder-react
+                        *
+                        * Copyright 2015-2016 Sociomantic Labs and other contributors
+                        * Released under the MIT license
+                        * https://github.com/sociomantic-tsunami/flounder-react/license
+                        *
+                        * Date: Thu Aug 25 2016
+                        * "This, so far, is the best Flounder ever"
+                        */
 import React, { Component } from 'react';
 import ReactDOM             from 'react-dom';
 import Flounder             from './core/flounder';

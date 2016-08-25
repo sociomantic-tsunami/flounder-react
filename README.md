@@ -14,7 +14,7 @@ require('flounder-react');
 // es6
 import Flounder from 'flounder-react';
 ```
- 
+
 
 Usage
 =====
@@ -382,10 +382,16 @@ When you release a new verion, commit it to dev (keeps dev upto date), commit it
 Change Log
 ==========
 
++ 1.0.0
+--------
+
++ updated to flounder 1.0.1
+
+
 + 0.1.2
 -------
 
-+ spread switched back to slice due to ie incompatabillity 
++ spread switched back to slice due to ie incompatabillity
 
 
 + 0.1.0
@@ -415,4 +421,3 @@ Change Log
 
 + tests
     + exist
-
