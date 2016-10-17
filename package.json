@@ -38,7 +38,7 @@
     "requirejs": "^2.1.22",
     "simulant": "^0.2.2",
     "sinon": "^1.17.4",
-    "flounder": "^1.0.0",
+    "flounder": "^1.1.0",
     "react": "^0.14.8",
     "react-dom": "^0.14.8"
   },
