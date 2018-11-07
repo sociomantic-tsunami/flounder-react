@@ -14,7 +14,7 @@ var licenceLong     = '/*!\n' +
                       ' * Flounder React JavaScript Stylable Selectbox v' + _package.version + '\n' +
                       ' * ' + _package.homepage + '\n' +
                       ' *\n' +
-                      ' * Copyright ' + ( 2015 === year ? year : '2015-' + year ) + ' Sociomantic Labs and other contributors\n' +
+                      ' * Copyright ' + ( 2015 === year ? year : '2015-' + year ) + ' dunnhumby Germany GmbH and other contributors\n' +
                       ' * Released under the MIT license\n' +
                       ' * https://github.com/sociomantic-tsunami/flounder-react/license\n' +
                       ' *\n' +
