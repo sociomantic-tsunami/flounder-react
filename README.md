@@ -1,3 +1,8 @@
+NOTE
+====
+
+**This project is archived and not maintained anymore.**
+
 Flounder.React.js 0.1.2
 =================
 
